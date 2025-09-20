@@ -48,7 +48,7 @@ export default function SignIn() {
         </div>
         <div className="mt-7 space-y-5 h-1/5">
           <div className="flex text-xs text-primary-dark gap-1 font-medium  flex-col items-center justify-between">
-            <Link href={"/welcome/1"}>Don't have an account? Sign up</Link>
+            <Link href={"/welcome/1"}>Don&apos;t have an account? Sign up</Link>
             <span>or sign up with:</span>
           </div>
           <div className="flex justify-center text-sm gap-3">

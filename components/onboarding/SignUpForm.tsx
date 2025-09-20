@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import PasswordInput from "./PasswordInput";
@@ -14,7 +14,8 @@ export default function SignUpForm({
   updateStep: (step: number) => void;
   action: string;
 }) {
-  const [showPassword, setShowPassword] = useState(false);
+  // Using password input component instead of managing state here
+  // const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="relative flex flex-col justify-center  py-10 px-5 z-20 h-full">
@@ -58,7 +59,7 @@ export default function SignUpForm({
         >
           <div className="flex text-xs text-primary-dark gap-1 font-medium  flex-col items-center justify-between">
             {action === "sign-in" ? (
-              <Link href={"/welcome/1"}>Don't have an account? Sign up</Link>
+              <Link href={"/welcome/1"}>Don&apos;t have an account? Sign up</Link>
             ) : (
               <span>or</span>
             )}

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 
 import { Separator } from "@/components/ui/separator";
 import { Command, CommandInput } from "@/components/ui/command";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartBar } from "@/components/charts/BarChart";
-import RevenueTable from "@/components/payout-and-wallets/RevenueTable";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { ChartBar } from "@/components/charts/BarChart";
+// import RevenueTable from "@/components/payout-and-wallets/RevenueTable";
 import { data } from "@/components/app-sidebar";
 import RidesAndOrders from "@/components/payout-and-wallets/RidesAndOrders";
 import TransactionHistory from "@/components/payout-and-wallets/TransactionHistory";

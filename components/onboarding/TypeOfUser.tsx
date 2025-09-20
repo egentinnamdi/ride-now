@@ -14,7 +14,14 @@ export default function TypeOfUser({
 }: {
   updateStep: (step: number) => void;
 }) {
+  // Use the selected user type in the component
   const [userType, setUserType] = useState("");
+  
+  // Function to handle user type selection and update
+  const handleUserTypeChange = (value: string) => {
+    setUserType(value);
+    // You could add additional logic here if needed
+  }
   return (
     <AnimateSlideIn>
       <div className="py-10 mt-10 bg-white px-5 flex flex-col gap-10">
@@ -22,7 +29,7 @@ export default function TypeOfUser({
           <h2>What type of user are you?</h2>
         </div>
         <div className="h-3/4 flex flex-col gap-3">
-          <RadioGroup onValueChange={(val) => setUserType(val)}>
+          <RadioGroup onValueChange={handleUserTypeChange} value={userType}>
             {users.map((user) => (
               <div
                 key={user}

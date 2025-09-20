@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 
 export default function VerifyAccount({
-  updateStep,
+  // updateStep,
 }: {
   updateStep: (step: number) => void;
 }) {
