@@ -12,6 +12,7 @@ import RidesAndOrders from "@/components/payout-and-wallets/RidesAndOrders";
 import TransactionHistory from "@/components/payout-and-wallets/TransactionHistory";
 import SubscriptionSetting from "@/components/payout-and-wallets/SubscriptionSetting";
 import Revenue from "@/components/payout-and-wallets/Revenue";
+import CommissionSettings from "@/components/payout-and-wallets/CommissionSettings";
 
 export default function Dashboard() {
   const { subpage } = useParams();
@@ -68,6 +69,7 @@ export default function Dashboard() {
         <RidesAndOrders />
         <TransactionHistory />
         <SubscriptionSetting />
+        <CommissionSettings />
       </Tabs>
     </div>
   );
