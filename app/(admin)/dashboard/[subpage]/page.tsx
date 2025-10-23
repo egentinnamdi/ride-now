@@ -13,6 +13,10 @@ import TransactionHistory from "@/components/payout-and-wallets/TransactionHisto
 import SubscriptionSetting from "@/components/payout-and-wallets/SubscriptionSetting";
 import Revenue from "@/components/payout-and-wallets/Revenue";
 import CommissionSettings from "@/components/payout-and-wallets/CommissionSettings";
+import TotalUsers from "@/components/user-management/TotalUsers";
+import ViewAndManage from "@/components/user-management/ViewAndManage";
+import PendingApprovals from "@/components/user-management/PendingApprovals";
+import SuspendedAccounts from "@/components/user-management/SuspendedAccounts";
 
 export default function Dashboard() {
   const { subpage } = useParams();
@@ -42,35 +46,41 @@ export default function Dashboard() {
           <h2 className="text-5xl font-semibold">{subpageHeader}</h2>
           <CommandInput placeholder="Search" className="w-1/4" />
         </header>
-      </Command>
-      <Tabs
-        value={currentTab ?? ""}
-        onValueChange={handleTabChange}
-        className="bg-white min-h-96"
-      >
-        {/* Tab List */}
-        <div className="flex flex-col no-scrollbar overflow-x-auto">
-          <TabsList className="bg-inherit  p-5 pb-0 rounded-none h-full ">
-            {subpageTabs?.items.map(({ url }) => (
-              <TabsTrigger
-                className="!capitalize cursor-pointer shrink-0  !text-lg  text-gray-400 data-[state=active]:bg-inherit data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:rounded-none data-[state=active]:shadow-none "
-                key={url}
-                value={url}
-              >
-                {url}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <Separator className="data-[orientation=horizontal]:!w-[90vw]" />
-        </div>
+        <Tabs
+          value={currentTab ?? ""}
+          onValueChange={handleTabChange}
+          className="bg-white"
+        >
+          {/* Tab List */}
+          <div className="flex flex-col no-scrollbar overflow-x-auto">
+            <TabsList className="bg-inherit  p-5 pb-0 rounded-none h-full ">
+              {subpageTabs?.items.map(({ url }) => (
+                <TabsTrigger
+                  className="!capitalize cursor-pointer shrink-0  !text-lg  text-gray-400 data-[state=active]:bg-inherit data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:rounded-none data-[state=active]:shadow-none "
+                  key={url}
+                  value={url}
+                >
+                  {url}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <Separator className="data-[orientation=horizontal]:!w-[90vw]" />
+          </div>
 
-        {/* Tab Content */}
-        <Revenue />
-        <RidesAndOrders />
-        <TransactionHistory />
-        <SubscriptionSetting />
-        <CommissionSettings />
-      </Tabs>
+          {/* Payouts & Wallets*/}
+          <Revenue />
+          <RidesAndOrders />
+          <TransactionHistory />
+          <SubscriptionSetting />
+          <CommissionSettings />
+
+          {/* User Management */}
+          <TotalUsers />
+          <ViewAndManage />
+          <PendingApprovals />
+          <SuspendedAccounts />
+        </Tabs>
+      </Command>
     </div>
   );
 }
