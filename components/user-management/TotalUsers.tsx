@@ -3,8 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Text from "../utility/Text";
 import { PieChartRing } from "../charts/PieChartRing";
-import { Button } from "../ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import ManagementItem from "./ManagementItem";
 
 const timeInterval = ["all-time", "yearly", "monthly", "weekly"];

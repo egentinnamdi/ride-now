@@ -15,7 +15,7 @@ export default function CommissionSettings() {
         <div className="flex-1 bg-background/10 rounded-lg py-6 px-4 flex flex-col gap-7">
           <div className="space-y-2.5 text-gray-400 ">
             <h3 className="text-lg font-medium ">
-              Define the platform's revenue share for services
+              Define the platform&apos;s revenue share for services
             </h3>
             <Separator />
           </div>

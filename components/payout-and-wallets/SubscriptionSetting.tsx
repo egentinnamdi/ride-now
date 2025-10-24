@@ -14,6 +14,10 @@ const subscriptionFields = [
 
 export default function SubscriptionSetting() {
   const [monthlySubscription, setMonthlySubscription] = useState("");
+  
+  const handleSubscriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMonthlySubscription(e.target.value);
+  };
   return (
     <TabsContent value="subscription settings" className="p-10 ">
       <div className=" flex justify-center gap-16 min-h-[70vh]">
@@ -45,8 +49,8 @@ export default function SubscriptionSetting() {
                   </Label>
                   <Input
                     id={field}
-                    // value={monthlySubscription}
-                    // onChange={(e) => e.target.i setMonthlySubscription(e.target.value)}
+                    value={field === "monthly subscription" ? monthlySubscription : ""}
+                    onChange={field === "monthly subscription" ? handleSubscriptionChange : undefined}
                     type="text"
                     placeholder={`Enter ${field}`}
                     className="h-13 placeholder:capitalize"
