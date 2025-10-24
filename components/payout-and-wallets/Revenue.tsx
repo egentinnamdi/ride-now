@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar } from "../charts/BarChart";
 import RevenueTable from "./RevenueTable";
+import { useQuey } from "@/hooks/useQuery";
 
 const timeInterval = ["monthly", "weekly", "daily", "all-time"];
 const tableHeaders = ["ID", "Day", "Type", "Revenue Earned (N)"];
@@ -33,15 +34,27 @@ const tableData = [
   },
 ];
 
+type TotalRevenue = {
+  totalRevenue: number;
+  percentageChange: number;
+  chartData: {
+    period: string;
+    revenue: number;
+  };
+};
+
 export default function Revenue() {
+  const revenueData = useQuey<TotalRevenue>("revenue", "/admin/revenue/total", {
+    timeframe: "monthly",
+  });
   return (
     <TabsContent value="revenue">
       <div className="bg-white  p-10 pt-7  gap-4 ">
         <Tabs defaultValue="monthly" className="flex flex-col gap-10">
           <div className="flex text-gray-600 text-xl font-semibold flex-col gap-2">
             <span>Total Revenue</span>
-            <span className="text-4xl text-primary font-bold">
-              &#8358;{(567900789.67).toLocaleString()}
+            <span className="text-primary text-3xl">
+              ${revenueData?.data?.totalRevenue || "0.00"}
             </span>
           </div>
           <TabsList className="bg-white">
