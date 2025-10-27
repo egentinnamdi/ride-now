@@ -2,15 +2,8 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import { cn } from "@/lib/utils";
+
+import UserManagementTable from "./UserManagementTable";
 
 const interval = ["monthly", "weekly", "daily", "all-time"];
 
@@ -23,9 +16,6 @@ const data = [
     type: "vendor",
     ["date submitted"]: "31st May, 2025",
     status: "11,350",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156771",
@@ -33,9 +23,6 @@ const data = [
     type: "Rider",
     ["date submitted"]: "31st May, 2025",
     status: "6570.90",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156772",
@@ -43,9 +30,6 @@ const data = [
     type: "vendor",
     ["date submitted"]: "31st May, 2025",
     status: "11,350",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156773",
@@ -53,9 +37,6 @@ const data = [
     type: "rider",
     ["date submitted"]: "31st May, 2025",
     status: "6570.90",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156774",
@@ -63,9 +44,6 @@ const data = [
     type: "vendor",
     ["date submitted"]: "31st May, 2025",
     status: "6570.90",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156775",
@@ -73,9 +51,6 @@ const data = [
     type: "rider",
     ["date submitted"]: "31st May, 2025",
     status: "6570.90",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
   {
     id: "11156776",
@@ -83,12 +58,9 @@ const data = [
     type: "rider",
     ["date submitted"]: "31st May, 2025",
     status: "6570.90",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
   },
 ];
-const className = "py-6 text-base text-gray-500 capitalize font-semibold";
+
 export default function PendingApprovals() {
   return (
     <TabsContent value="pending approval" className="p-10 space-y-9">
@@ -111,7 +83,7 @@ export default function PendingApprovals() {
           <div className="flex items-center capitalize font-semibold text-background gap-3 px-4">
             <span>Filter by:</span>
             <span className="text-gray-500">type</span>
-            <ChevronDown className="text-primary" />
+            <ChevronDown size={20} className="text-primary" />
             <Button className="text-gray-600  bg-green-100">Order</Button>
             <Download size={17} className="text-primary ml-2" />
             <EllipsisVertical size={17} className="text-primary" />
@@ -119,44 +91,7 @@ export default function PendingApprovals() {
         </div>
         {interval.map((item) => (
           <TabsContent className="h-full" key={item} value={item}>
-            <Table className="bg-background/10 rounded-2xl px-10 py-5">
-              <TableHeader>
-                <TableRow>
-                  {headers?.map((header) => (
-                    <TableHead
-                      key={header}
-                      className="text-primary w-32 py-6 font-bold text-base"
-                    >
-                      {header}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.map((item) => (
-                  <TableRow
-                    key={(item as { id?: string }).id ?? JSON.stringify(item)}
-                  >
-                    <TableCell className={cn(className)}>{item.id}</TableCell>
-                    <TableCell className={cn(className)}>{item.name}</TableCell>
-                    <TableCell className={cn(className)}>
-                      <span className="text-green-600 border px-6 py-1.5 rounded-md border-green-600 bg-green-600/5">
-                        {item.type}
-                      </span>
-                    </TableCell>
-                    <TableCell className={cn(className)}>
-                      {item["date submitted"]}
-                    </TableCell>
-                    <TableCell className={cn(className)}>
-                      {item.status}
-                    </TableCell>
-                    <TableCell className={cn(className)}>
-                      {item.action}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <UserManagementTable headers={headers} data={data} className="" />
           </TabsContent>
         ))}
       </Tabs>

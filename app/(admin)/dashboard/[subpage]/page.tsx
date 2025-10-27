@@ -1,12 +1,9 @@
 "use client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
 import { Separator } from "@/components/ui/separator";
 import { Command, CommandInput } from "@/components/ui/command";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { ChartBar } from "@/components/charts/BarChart";
-// import RevenueTable from "@/components/payout-and-wallets/RevenueTable";
 import { data } from "@/components/app-sidebar";
 import RidesAndOrders from "@/components/payout-and-wallets/RidesAndOrders";
 import TransactionHistory from "@/components/payout-and-wallets/TransactionHistory";
@@ -18,6 +15,9 @@ import ViewAndManage from "@/components/user-management/ViewAndManage";
 import PendingApprovals from "@/components/user-management/PendingApprovals";
 import SuspendedAccounts from "@/components/user-management/SuspendedAccounts";
 import AddCoupon from "@/components/coupon-management/AddCoupon";
+import OngoingOrders from "@/components/orders-and-trips/OngoingOrders";
+import CompletedOrders from "@/components/orders-and-trips/CompletedOrders";
+import Cancellations from "@/components/orders-and-trips/Cancellations";
 
 export default function Dashboard() {
   const { subpage } = useParams();
@@ -80,6 +80,11 @@ export default function Dashboard() {
           <ViewAndManage />
           <PendingApprovals />
           <SuspendedAccounts />
+
+          {/* Orders and Trips */}
+          <OngoingOrders />
+          <CompletedOrders />
+          <Cancellations />
 
           {/* Coupon Management */}
           <AddCoupon />

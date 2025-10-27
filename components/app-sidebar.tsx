@@ -99,11 +99,11 @@ export const data = {
       items: [
         {
           title: "Ongoing Orders / Rides",
-          url: "ongoing rides",
+          url: "ongoing orders/rides",
         },
         {
-          title: "completed Orders / Rides",
-          url: "completed rides",
+          title: "Completed Orders / Rides",
+          url: "completed orders/rides",
         },
         {
           title: "Cancellations & Reasons",
@@ -172,7 +172,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {navItem.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          className="hover:!bg-gray-300 data-[active=true]:!bg-gray-300 data-[active=true]:!font-bold  !h-11 text-base text-gray-300"
+                          className="hover:!bg-gray-300 data-[active=true]:!bg-gray-300 data-[active=true]:!font-bold pl-5 !h-11 text-base text-gray-300"
                           asChild
                           isActive={tab === item.url ? true : false}
                         >
