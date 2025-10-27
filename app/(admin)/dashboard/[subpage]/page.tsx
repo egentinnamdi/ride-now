@@ -17,6 +17,7 @@ import TotalUsers from "@/components/user-management/TotalUsers";
 import ViewAndManage from "@/components/user-management/ViewAndManage";
 import PendingApprovals from "@/components/user-management/PendingApprovals";
 import SuspendedAccounts from "@/components/user-management/SuspendedAccounts";
+import AddCoupon from "@/components/coupon-management/AddCoupon";
 
 export default function Dashboard() {
   const { subpage } = useParams();
@@ -79,6 +80,9 @@ export default function Dashboard() {
           <ViewAndManage />
           <PendingApprovals />
           <SuspendedAccounts />
+
+          {/* Coupon Management */}
+          <AddCoupon />
         </Tabs>
       </Command>
     </div>

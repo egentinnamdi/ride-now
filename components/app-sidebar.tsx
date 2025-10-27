@@ -118,11 +118,11 @@ export const data = {
       items: [
         {
           title: "Add a Coupon",
-          url: "#",
+          url: "add coupon",
         },
         {
           title: "All Coupons",
-          url: "#",
+          url: "all coupon",
         },
       ],
     },

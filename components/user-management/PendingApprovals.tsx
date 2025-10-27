@@ -100,7 +100,7 @@ export default function PendingApprovals() {
           <TabsList className="bg-white">
             {interval.map((item) => (
               <TabsTrigger
-                className="capitalize text-background text-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:h-16"
+                className="capitalize! text-background text-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:h-16"
                 key={item}
                 value={item}
               >
