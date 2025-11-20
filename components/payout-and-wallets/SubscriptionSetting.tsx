@@ -5,16 +5,19 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 const subscriptionFields = [
-  "monthly subscription",
-  "description",
-  "daily drive limits",
+  { label: "monthly subscription", type: "number" },
+  { label: "description", type: "text" },
+  { label: "daily driving limits", type: "number" },
 ];
 
 export default function SubscriptionSetting() {
   const [monthlySubscription, setMonthlySubscription] = useState("");
-  
+  const [description, setDescription] = useState("");
+  const [limit, setLimit] = useState<number | undefined>();
+
   const handleSubscriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMonthlySubscription(e.target.value);
   };
@@ -38,23 +41,41 @@ export default function SubscriptionSetting() {
             >
               {subscriptionFields.map((field) => (
                 <div
-                  key={field}
+                  key={field.label}
                   className="flex flex-col gap-2  justify-between"
                 >
                   <Label
-                    htmlFor={field}
+                    htmlFor={field.label}
                     className="text-primary text-lg font-medium"
                   >
-                    {field}
+                    {field.label}
                   </Label>
-                  <Input
-                    id={field}
-                    value={field === "monthly subscription" ? monthlySubscription : ""}
-                    onChange={field === "monthly subscription" ? handleSubscriptionChange : undefined}
-                    type="text"
-                    placeholder={`Enter ${field}`}
-                    className="h-13 placeholder:capitalize"
-                  />
+                  {field.label === "description" ? (
+                    <Textarea
+                      id={field.label}
+                      placeholder={`Enter ${field.label}`}
+                      className="h-13 placeholder:capitalize"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  ) : (
+                    <Input
+                      id={field.label}
+                      value={
+                        field.label === "monthly subscription"
+                          ? monthlySubscription
+                          : limit
+                      }
+                      onChange={
+                        field.label === "monthly subscription"
+                          ? handleSubscriptionChange
+                          : (e) => setLimit(+e.target.value)
+                      }
+                      type={field.type}
+                      placeholder={`Enter ${field.label}`}
+                      className="h-13 placeholder:capitalize"
+                    />
+                  )}
                 </div>
               ))}
               <Button className="h-14">Save changes</Button>
@@ -78,10 +99,8 @@ export default function SubscriptionSetting() {
                 &#8358;{monthlySubscription.toLocaleString() || 0}.00
               </span>
             </div>
-            <div className="w-2/4 text-gray-400">
-              <span className="text-xl  ">
-                Pay a weekly fee and drive without charges.
-              </span>
+            <div className="w-3/4 text-gray-400">
+              <span className="text-xl">{description}</span>
             </div>
           </div>
         </div>

@@ -4,14 +4,14 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 
-export function useQuey<T>(
+export function useQuery<T>(
   key: string,
   endpoint: string,
   params?: Record<string, string>,
   options?: UseQueryOptions<T>
 ) {
   return useReactQuery<T>({
-    queryKey: [key],
+    queryKey: [key, params],
     queryFn: async () => {
       const { data } = await api.get<T>(endpoint, { params });
       return data;

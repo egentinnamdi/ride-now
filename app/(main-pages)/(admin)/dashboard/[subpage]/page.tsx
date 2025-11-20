@@ -15,9 +15,14 @@ import ViewAndManage from "@/components/user-management/ViewAndManage";
 import PendingApprovals from "@/components/user-management/PendingApprovals";
 import SuspendedAccounts from "@/components/user-management/SuspendedAccounts";
 import AddCoupon from "@/components/coupon-management/AddCoupon";
-import OngoingOrders from "@/components/orders-and-trips/OngoingOrders";
-import CompletedOrders from "@/components/orders-and-trips/CompletedOrders";
-import Cancellations from "@/components/orders-and-trips/Cancellations";
+import { SigninResponseDto } from "@/types/auth";
+import Rides from "@/components/orders-and-trips/Rides";
+
+const rides = [
+  { title: "ongoing orders/rides", status: "in_progress" },
+  { title: "completed orders/rides", status: "completed" },
+  { title: "cancellations", status: "cancelled" },
+];
 
 export default function Dashboard() {
   const { subpage } = useParams();
@@ -28,7 +33,11 @@ export default function Dashboard() {
   const [subpageTabs] = data.navMain.filter(
     (item) => item.title === subpageHeader
   );
+  const [totalOngoing, setTotalOngoing] = useState(0);
+  const [totalCancelled, setTotalCancelled] = useState(0);
   const router = useRouter();
+  const userJson = localStorage.getItem("/auth/signin");
+  const user: SigninResponseDto | null = userJson ? JSON.parse(userJson) : null;
 
   useEffect(() => {
     setCurrentTab(tab);
@@ -50,7 +59,7 @@ export default function Dashboard() {
         <Tabs
           value={currentTab ?? ""}
           onValueChange={handleTabChange}
-          className="bg-white"
+          className="bg-whit "
         >
           {/* Tab List */}
           <div className="flex flex-col no-scrollbar overflow-x-auto">
@@ -61,20 +70,38 @@ export default function Dashboard() {
                   key={url}
                   value={url}
                 >
-                  {url}
+                  <div className="flex gap-2 items-center">
+                    {url === "ongoing orders/rides" && (
+                      <>
+                        <span>{url}</span>
+                        <span className="bg-green-500 rounded-2xl min-w-7 text-white text-xs p-1.5">
+                          {totalOngoing}
+                        </span>
+                      </>
+                    )}
+                    {url === "cancellations" && (
+                      <>
+                        <span>{url}</span>
+                        <span className="bg-red-600 rounded-2xl min-w-7 text-white text-xs p-1.5">
+                          {totalCancelled}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {url !== "ongoing orders/rides" &&
+                    url !== "cancellations" &&
+                    url}
                 </TabsTrigger>
               ))}
             </TabsList>
             <Separator className="data-[orientation=horizontal]:!w-[90vw]" />
           </div>
-
           {/* Payouts & Wallets*/}
           <Revenue />
           <RidesAndOrders />
           <TransactionHistory />
           <SubscriptionSetting />
           <CommissionSettings />
-
           {/* User Management */}
           <TotalUsers />
           <ViewAndManage />
@@ -82,9 +109,18 @@ export default function Dashboard() {
           <SuspendedAccounts />
 
           {/* Orders and Trips */}
-          <OngoingOrders />
-          <CompletedOrders />
-          <Cancellations />
+          {rides.map(({ title, status }) => (
+            <Rides
+              title={title}
+              status={status}
+              key={title}
+              updateTotal={(total) =>
+                status === "in_progress"
+                  ? setTotalOngoing(total)
+                  : setTotalCancelled(total)
+              }
+            />
+          ))}
 
           {/* Coupon Management */}
           <AddCoupon />

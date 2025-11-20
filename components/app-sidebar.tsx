@@ -43,14 +43,14 @@ export const data = {
           title: "Transaction History",
           url: "transaction history",
         },
-        {
-          title: "Earnings Breakdown",
-          url: "earning breakdown",
-        },
-        {
-          title: "Pending Payouts",
-          url: "pending payouts",
-        },
+        // {
+        //   title: "Earnings Breakdown",
+        //   url: "earning breakdown",
+        // },
+        // {
+        //   title: "Pending Payouts",
+        //   url: "pending payouts",
+        // },
         {
           title: "Subscription Settings",
           url: "subscription settings",
@@ -59,10 +59,10 @@ export const data = {
           title: "Commission Settings",
           url: "commission settings",
         },
-        {
-          title: "Delivery Price",
-          url: "delivery price",
-        },
+        // {
+        //   title: "Delivery Price",
+        //   url: "delivery price",
+        // },
       ],
     },
     {
@@ -120,10 +120,10 @@ export const data = {
           title: "Add a Coupon",
           url: "add coupon",
         },
-        {
-          title: "All Coupons",
-          url: "all coupon",
-        },
+        // {
+        //   title: "All Coupons",
+        //   url: "all coupon",
+        // },
       ],
     },
   ],
@@ -152,7 +152,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <Collapsible
             key={navItem.title}
             title={navItem.title}
-            defaultOpen
+            defaultOpen={false}
             className="group/collapsible"
           >
             <SidebarGroup>

@@ -1,60 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { TabsContent } from "../ui/tabs";
 import { CarFront } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
+import { useQuery } from "@/hooks/useQuery";
+import { NoTransactions } from "../multi-page/NoTransactions";
 
 const className = "flex flex-col  rounded-2xl p-4  justify-between w-2/4 h-40";
 
-const tableHeaders = ["ID", "Day", "Location", "Revenue Earned (N)"];
-
-const tableData = [
-  {
-    id: "11156778",
-    day: "31st Jan 2025",
-    location: "abuja",
-    revenue: 11350,
-  },
-  {
-    id: "11156798",
-    day: "31st Jan 2025",
-    location: "lagos",
-    revenue: 11350,
-  },
-  {
-    id: "11156768",
-    day: "31st Jan 2025",
-    location: "asaba",
-    revenue: 11350,
-  },
-  {
-    id: "11156758",
-    day: "31st Jan 2025",
-    location: "asaba",
-    revenue: 11350,
-  },
-  {
-    id: "11156758",
-    day: "31st Jan 2025",
-    location: "abuja",
-    revenue: 11350,
-  },
-  {
-    id: "11156758",
-    day: "31st Jan 2025",
-    location: "lagos",
-    revenue: 11350,
-  },
-  {
-    id: "11156758",
-    day: "31st Jan 2025",
-    location: "asaba",
-    revenue: 11350,
-  },
+const tableHeaders = [
+  "ID",
+  "Day",
+  "Customer",
+  "Location",
+  "Revenue Earned (N)",
 ];
 
+type RideTransactionDto = {
+  id: string;
+  day: string;
+  customer: string;
+  location: string;
+  revenueEarned: number;
+};
+
+export type PaginationResponseDto = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+type AdminTransactionsResponseDto = {
+  transactions: RideTransactionDto[];
+  pagination: PaginationResponseDto;
+};
+
 export default function RidesAndOrders() {
+  const [data, setData] = useState<RideTransactionDto[] | null>(null);
+  // Get All rides completed
+  const { data: completedRides } = useQuery<{
+    ridesCompleted: number;
+  }>("completed-rides", "/admin/rides/summary");
+
+  function syncData(values: AdminTransactionsResponseDto) {
+    setData(values.transactions);
+  }
+
   return (
     <TabsContent value="rides and orders" className="p-10">
       <div className="flex gap-5">
@@ -64,7 +57,7 @@ export default function RidesAndOrders() {
             <span className=" font-semibold">Rides completed</span>
           </div>
           <span className="text-2xl font-semibold text-gray-700">
-            13,456 rides
+            {completedRides?.ridesCompleted.toLocaleString() || "0"} rides
           </span>
         </div>
         <div className={cn("bg-background/10", className)}>
@@ -78,8 +71,16 @@ export default function RidesAndOrders() {
         </div>
       </div>
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
-      <Transactions title="January">
-        <RevenueTable headers={tableHeaders} data={tableData} />
+      <Transactions
+        key="rides-transactions"
+        endpoint="/admin/rides/transactions"
+        syncData={syncData}
+      >
+        {data?.length ? (
+          <RevenueTable headerItems={tableHeaders} tableData={data} />
+        ) : (
+          <NoTransactions />
+        )}
       </Transactions>
     </TabsContent>
   );

@@ -6,22 +6,28 @@ import { Eye, EyeOff } from "lucide-react";
 export default function PasswordInput({
   label,
   placeholder,
+  handleChange,
+  value,
 }: {
   label: string;
   placeholder: string;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="w-full capitalize relative space-y-2 text-gray-400">
-      <Label className="text-xs" htmlFor="password">
+    <div className="w-full relative space-y-2 text-gray-400">
+      <Label className="text-xs capitalize" htmlFor="password">
         {label}
       </Label>
       <Input
+        value={value}
+        onChange={handleChange}
         type={showPassword ? "text" : "password"}
         id="password"
         placeholder={placeholder}
-        className="placeholder:text-xs capitalize h-10 placeholder:text-gray-400"
+        className="placeholder:text-xs normal-case h-10 placeholder:text-gray-400"
       />
       <div
         onClick={() => setShowPassword((prev) => !prev)}
