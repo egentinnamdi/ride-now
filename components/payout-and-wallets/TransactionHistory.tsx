@@ -30,11 +30,12 @@ type TransactionsAndPaginationDto = {
 
 export default function TransactionHistory() {
   const [data, setData] = useState<TransactionsDto | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function syncData(values: TransactionsAndPaginationDto) {
+  function syncData(values: TransactionsAndPaginationDto, isLoading: boolean) {
     setData(values.transactions);
+    setIsLoading(isLoading);
   }
-  console.log(data);
 
   return (
     <TabsContent value="transaction history" className="p-10  flex-1  pt-0">
@@ -43,12 +44,13 @@ export default function TransactionHistory() {
         syncData={syncData}
         key="transaction-history"
         endpoint="/admin/transactions"
+        queryKey="transaction-history"
       >
-        {data?.length ? (
-          <RevenueTable headerItems={tableHeaders} tableData={data} />
-        ) : (
-          <NoTransactions />
-        )}
+        <RevenueTable
+          headerItems={tableHeaders}
+          tableData={data ?? []}
+          isLoading={isLoading}
+        />
       </Transactions>
     </TabsContent>
   );

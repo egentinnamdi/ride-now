@@ -1,67 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { Button } from "../ui/button";
 
 import UserManagementTable from "./UserManagementTable";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const interval = ["monthly", "weekly", "daily", "all-time"];
 
 const headers = ["ID", "Name", "Type", "Date Submitted", "Status", "Action"];
 
-const data = [
-  {
-    id: "11156778",
-    name: "Kelechi Dure",
-    type: "vendor",
-    ["date submitted"]: "31st May, 2025",
-    status: "11,350",
-  },
-  {
-    id: "11156771",
-    name: "Ella Nwaogu",
-    type: "Rider",
-    ["date submitted"]: "31st May, 2025",
-    status: "6570.90",
-  },
-  {
-    id: "11156772",
-    name: "Chioma Okafor",
-    type: "vendor",
-    ["date submitted"]: "31st May, 2025",
-    status: "11,350",
-  },
-  {
-    id: "11156773",
-    name: "Emeka Uche",
-    type: "rider",
-    ["date submitted"]: "31st May, 2025",
-    status: "6570.90",
-  },
-  {
-    id: "11156774",
-    name: "Adaeze Nwosu",
-    type: "vendor",
-    ["date submitted"]: "31st May, 2025",
-    status: "6570.90",
-  },
-  {
-    id: "11156775",
-    name: "Tunde Afolabi",
-    type: "rider",
-    ["date submitted"]: "31st May, 2025",
-    status: "6570.90",
-  },
-  {
-    id: "11156776",
-    name: "Ngozi Obi",
-    type: "rider",
-    ["date submitted"]: "31st May, 2025",
-    status: "6570.90",
-  },
-];
-
 export default function PendingApprovals() {
+  const [type, setType] = useState<string>("");
   return (
     <TabsContent value="pending approval" className="p-10 space-y-9">
       <h2 className="text-2xl font-semibold text-gray-600">
@@ -82,16 +40,36 @@ export default function PendingApprovals() {
           </TabsList>
           <div className="flex items-center capitalize font-semibold text-background gap-3 px-4">
             <span>Filter by:</span>
-            <span className="text-gray-500">type</span>
-            <ChevronDown size={20} className="text-primary" />
+            <Select onValueChange={(val) => setType(val)}>
+              <SelectTrigger className="shadow-none border-none">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Select Type</SelectLabel>
+                  {["driver"].map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {/* <ChevronDown size={20} className="text-primary" />
             <Button className="text-gray-600  bg-green-100">Order</Button>
             <Download size={17} className="text-primary ml-2" />
-            <EllipsisVertical size={17} className="text-primary" />
+            <EllipsisVertical size={17} className="text-primary" /> */}
           </div>
         </div>
         {interval.map((item) => (
           <TabsContent className="h-full" key={item} value={item}>
-            <UserManagementTable headers={headers} data={data} className="" />
+            <UserManagementTable
+              type={type}
+              headers={headers}
+              className=""
+              queryKey="pending-approval"
+              endpoint="/admin/approvals/pending"
+            />
           </TabsContent>
         ))}
       </Tabs>

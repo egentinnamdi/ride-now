@@ -14,7 +14,7 @@ import PaginationComponent from "../ui/PaginationComponent";
 import { useQuery } from "@/hooks/useQuery";
 import { PendingApproval, PendingApprovalsDto } from "@/types/userManagement";
 import { Skeleton } from "../ui/skeleton";
-import NoTransactions from "../multi-page/NoTransactions";
+import { NoTransactions } from "../multi-page/NoTransactions";
 
 export default function UserManagementTable({
   headers,
@@ -26,8 +26,8 @@ export default function UserManagementTable({
   headers: Array<string>;
   className?: string;
   queryKey: string;
-  endpoint:string;
-  type:string
+  endpoint: string;
+  type: string;
 }) {
   const [page, setPage] = useState<number>(1);
   const { data: result, isLoading } = useQuery<PendingApprovalsDto>(
@@ -53,21 +53,26 @@ export default function UserManagementTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {isLoading
-          ? Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
-                {headers.map((item) => (
-                  <TableCell
-                    key={item}
-                    className="font-medium text-gray-400 py-5 pl-3 text-base"
-                  >
-                    <Skeleton className="h-4 w-full bg-gray-400/30" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          : result?.pendingApprovals && result?.pendingApprovals.filter(item => item.userType.includes(type)).length > 0
-          ? result?.pendingApprovals.filter(item => item.userType.includes(type)).map((item) => (
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i}>
+              {headers.map((item) => (
+                <TableCell
+                  key={item}
+                  className="font-medium text-gray-400 py-5 pl-3 text-base"
+                >
+                  <Skeleton className="h-4 w-full bg-gray-400/30" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        ) : result?.pendingApprovals &&
+          result?.pendingApprovals.filter((item) =>
+            item.userType.includes(type)
+          ).length > 0 ? (
+          result?.pendingApprovals
+            .filter((item) => item.userType.includes(type))
+            .map((item) => (
               <TableRow
                 key={(item as { id?: string }).id ?? JSON.stringify(item)}
               >
@@ -103,7 +108,9 @@ export default function UserManagementTable({
                 </TableCell>
               </TableRow>
             ))
-          : <NoTransactions colSpan={headers.length} />}
+        ) : (
+          <NoTransactions colSpan={headers.length} />
+        )}
       </TableBody>
       <TableFooter>
         {result?.pagination && result?.pagination.totalPages > 1 && (

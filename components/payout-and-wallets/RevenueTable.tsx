@@ -30,7 +30,7 @@ export default function RevenueTable<T>({
 }: TableType<T>) {
   return (
     <div className="flex flex-col gap-10">
-      <div className="flex capitalize items-center px-3">
+      <div className="flex bg-amber-500 flex-c capitalize items-center px-3">
         <h3 className="flex-1 font-medium text-xl">{title}</h3>
         {children}
       </div>
@@ -63,8 +63,8 @@ export default function RevenueTable<T>({
             ))}
           </TableBody>
         </Table>
-      ) : !tableData.length ? (
-        <NoTransactions />
+      ) : !tableData?.length ? (
+        <NoTransactions colSpan={headerItems.length} />
       ) : (
         <Table className="bg-background/10 p-5 rounded-sm">
           <TableHeader>
