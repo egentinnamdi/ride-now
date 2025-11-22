@@ -8,10 +8,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { useQueryClient } from "@tanstack/react-query";
 
-export function NoTransactions() {
+export function NoTransactions({ queryKeys }: { queryKeys?: Array<string> }) {
+  const queryClient = useQueryClient();
   return (
-    <Empty>
+    <Empty className="bg-background/10">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <IconTransactionDollar />
@@ -24,17 +26,15 @@ export function NoTransactions() {
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <Button>Refresh Table</Button>
-
-          {/* <Button variant="outline">Add Manual Transaction</Button> */}
+          <Button
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: queryKeys })
+            }
+          >
+            Refresh Table
+          </Button>
         </div>
       </EmptyContent>
-      <Button
-        variant="link"
-        asChild
-        className="text-muted-foreground"
-        size="sm"
-      ></Button>
     </Empty>
   );
 }

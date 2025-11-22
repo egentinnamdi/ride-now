@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { ChevronDown, EllipsisVertical } from "lucide-react";
 import RevenueTable from "../payout-and-wallets/RevenueTable";
 import DriverInfo from "./DriverInfo";
+import { UserSummaryDto } from "@/types/userManagement";
 
 const items = ["drivers", "riders", "passengers"];
 
@@ -100,17 +101,26 @@ const tableData = [
   },
 ];
 
-export default function ViewAndManage() {
+export default function ViewAndManage({
+  summary,
+  isLoading,
+}: {
+  summary: UserSummaryDto | undefined;
+  isLoading: boolean;
+}) {
   const [{ id, show }, setSeeDriver] = useState<{ id: string; show: boolean }>({
     id: "",
-    show: true,
+    show: false,
   });
 
   function toggleDriverInfo(id: string) {
     setSeeDriver({ id, show: !show });
   }
   return (
-    <TabsContent className=" min-h-[50vh] px-10 py-5" value="view and manage">
+    <TabsContent
+      className=" min-h-[50vh] px-10 py-5 pb-10"
+      value="view and manage"
+    >
       {show ? (
         <DriverInfo id={id} toggleDriverInfo={toggleDriverInfo} />
       ) : (
@@ -129,36 +139,53 @@ export default function ViewAndManage() {
           <div>
             <div className="flex gap-7 h-[35vh] ">
               <ManagementItem
-                total={210000}
+                isLoading={isLoading}
+                total={summary?.commissionDrivers ?? 0}
                 text="commission drivers"
+                percentageChange={
+                  summary?.percentageChanges.commissionDrivers ?? 0
+                }
                 className="w-1/3 justify-between"
                 hiddenBtn={true}
               />
               <ManagementItem
-                total={24567}
+                isLoading={isLoading}
+                total={summary?.subscribedDrivers ?? 0}
                 text="subscribed drivers"
+                percentageChange={
+                  summary?.percentageChanges.subscribedDrivers ?? 0
+                }
                 className="w-1/3 justify-between"
                 hiddenBtn={true}
               />
+
               <div className="w-1/3  flex flex-col gap-7">
                 <ManagementItem
-                  total={23678}
+                  total={summary?.totalRidesCompleted ?? 0}
                   text="total rides completed"
                   className="h-2/4"
                   hiddenAvatar={true}
                   hiddenBtn={true}
+                  isLoading={isLoading}
+                  percentageChange={
+                    summary?.percentageChanges.totalRidesCompleted ?? 0
+                  }
                 />
                 <ManagementItem
-                  total={3.8}
+                  total={summary?.avgDriverRating ?? 0}
                   text="avg driver rating"
                   className="h-2/4 bg-orange-300/20 text-orange-500"
                   hiddenAvatar={true}
                   hiddenBtn={true}
+                  percentageChange={
+                    summary?.percentageChanges.avgDriverRating ?? 0
+                  }
+                  isLoading={isLoading}
                 />
               </div>
             </div>
           </div>
-          <div className="capitalize space-y-9 mt-7">
+          <div className="capitalize space-y-3 mt-7">
             <TableTitle
               title="all drivers"
               action={

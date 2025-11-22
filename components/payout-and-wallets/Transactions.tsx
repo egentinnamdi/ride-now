@@ -14,20 +14,20 @@ import { useQuery } from "@/hooks/useQuery";
 
 export default function Transactions<T>({
   children,
-  key,
+  queryKey,
   endpoint,
   syncData,
 }: {
   children: React.ReactNode;
-  key: string;
+  queryKey: string;
   endpoint: string;
-  syncData: (data: T) => void;
+  syncData: (data: T, isLoading: boolean) => void;
 }) {
   const today = new Date();
   const [location, setLocation] = useState("lagos");
   const [month, setMonth] = useState(today.getMonth().toString());
 
-  const { data: result } = useQuery<T>(key, endpoint, {
+  const { data: result, isLoading } = useQuery<T>(queryKey, endpoint, {
     limit: "10",
     page: "1",
     month,
@@ -46,9 +46,9 @@ export default function Transactions<T>({
 
   useEffect(() => {
     if (result) {
-      syncData(result);
+      syncData(result, isLoading);
     }
-  }, [result, syncData]);
+  }, [result, syncData, isLoading]);
 
   return (
     <div className="flex flex-col  gap-7 mt-7">

@@ -34,6 +34,7 @@ import {
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { NoTransactions } from "../multi-page/NoTransactions";
 
 const headerItems = [
   "coupon code",
@@ -50,7 +51,6 @@ export default function CouponTable() {
     "/admin/coupons"
   );
 
-  console.log(coupons?.coupons[0].validTIll);
   // Update Coupons
   const [validity, setValidity] = useState("");
   const [limit, setLimit] = useState("");
@@ -67,97 +67,104 @@ export default function CouponTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {isLoading
-          ? Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
-                {headerItems.map((item) => (
-                  <TableCell
-                    key={item}
-                    className="font-medium text-gray-400 py-5 pl-3 text-base"
-                  >
-                    <Skeleton className="h-4 w-full bg-gray-400/30" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          : coupons?.coupons.map((cell) => (
-              <TableRow key={cell.couponCode}>
-                <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
-                  {cell.couponCode}
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i}>
+              {headerItems.map((item) => (
+                <TableCell
+                  key={item}
+                  className="font-medium text-gray-400 py-5 pl-3 text-base"
+                >
+                  <Skeleton className="h-4 w-full bg-gray-400/30" />
                 </TableCell>
-                <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
-                  {cell.createdBy}
-                </TableCell>
-                <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
-                  {cell.validTIll}
-                </TableCell>
-                <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
-                  {cell.usageLimit}
-                </TableCell>
-                <TableCell>
-                  <Menubar className="bg-inherit border-none shadow-none">
-                    <MenubarMenu>
-                      <MenubarTrigger className="bg-inherit">
-                        <EllipsisVertical className="text-primary" size={20} />
-                      </MenubarTrigger>
-                      <form>
-                        <MenubarContent>
-                          <DialogTrigger asChild>
-                            <MenubarItem>Edit Coupon</MenubarItem>
-                          </DialogTrigger>
-                        </MenubarContent>
-                        <DialogContent className="sm:max-w-[425px] bg-white">
-                          <DialogHeader>
-                            <DialogTitle>Update Coupon</DialogTitle>
-                            <DialogDescription>
-                              Make changes to coupon here. Click save when
-                              you&apos;re done.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="grid gap-4">
-                            <div className="space-y-2">
-                              <Label className="text-primary text-base font-normal">
-                                Coupon Validity Period
-                              </Label>
-                              <Input
-                                type="date"
-                                className="placeholder:capitalize h-12 border border-primary/50"
-                                placeholder="Coupon Validity Period"
-                                value={validity}
-                                onChange={(e) => setValidity(e.target.value)}
-                              />
-                            </div>
-                            <div className=" space-y-2">
-                              <Label className="text-primary text-base font-normal">
-                                Coupon Usage Limit
-                              </Label>
-                              <Input
-                                type="number"
-                                className="placeholder:capitalize h-12 border border-primary/50"
-                                placeholder="Coupon Usage Limit"
-                                value={limit}
-                                onChange={(e) => setLimit(e.target.value)}
-                              />
-                            </div>
+              ))}
+            </TableRow>
+          ))
+        ) : coupons?.coupons && coupons?.coupons.length > 0 ? (
+          coupons?.coupons.map((cell) => (
+            <TableRow key={cell.couponCode}>
+              <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
+                {cell.couponCode}
+              </TableCell>
+              <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
+                {cell.createdBy}
+              </TableCell>
+              <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
+                {cell.validTIll}
+              </TableCell>
+              <TableCell className="font-medium text-gray-400 py-5 pl-3 text-base">
+                {cell.usageLimit}
+              </TableCell>
+              <TableCell>
+                <Menubar className="bg-inherit border-none shadow-none">
+                  <MenubarMenu>
+                    <MenubarTrigger className="bg-inherit">
+                      <EllipsisVertical className="text-primary" size={20} />
+                    </MenubarTrigger>
+                    <form>
+                      <MenubarContent>
+                        <DialogTrigger asChild>
+                          <MenubarItem>Edit Coupon</MenubarItem>
+                        </DialogTrigger>
+                      </MenubarContent>
+                      <DialogContent className="sm:max-w-[425px] bg-white">
+                        <DialogHeader>
+                          <DialogTitle>Update Coupon</DialogTitle>
+                          <DialogDescription>
+                            Make changes to coupon here. Click save when
+                            you&apos;re done.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-primary text-base font-normal">
+                              Coupon Validity Period
+                            </Label>
+                            <Input
+                              type="date"
+                              className="placeholder:capitalize h-12 border border-primary/50"
+                              placeholder="Coupon Validity Period"
+                              value={validity}
+                              onChange={(e) => setValidity(e.target.value)}
+                            />
                           </div>
-                          ;
-                          <DialogFooter>
-                            <DialogClose asChild>
-                              <Button className="h-12" variant="outline">
-                                Cancel
-                              </Button>
-                            </DialogClose>
-                            <Button className="h-12" type="submit">
-                              Save changes
+                          <div className=" space-y-2">
+                            <Label className="text-primary text-base font-normal">
+                              Coupon Usage Limit
+                            </Label>
+                            <Input
+                              type="number"
+                              className="placeholder:capitalize h-12 border border-primary/50"
+                              placeholder="Coupon Usage Limit"
+                              value={limit}
+                              onChange={(e) => setLimit(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        ;
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button className="h-12" variant="outline">
+                              Cancel
                             </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </form>
-                    </MenubarMenu>
-                  </Menubar>
-                </TableCell>
-              </TableRow>
-            ))}
+                          </DialogClose>
+                          <Button className="h-12" type="submit">
+                            Save changes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </form>
+                  </MenubarMenu>
+                </Menubar>
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <NoTransactions
+            // colSpan={headerItems.length}
+            message="No coupons yet"
+          />
+        )}
       </TableBody>
     </Table>
   );

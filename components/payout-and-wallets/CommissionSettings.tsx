@@ -8,6 +8,7 @@ import { useQuery } from "@/hooks/useQuery";
 import { useMutation } from "@/hooks/useMutation";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
+import { Skeleton } from "../ui/skeleton";
 
 const commissionFields = ["rides", "orders", "drivers"];
 
@@ -18,7 +19,7 @@ type CommissionsDto = {
 };
 
 export default function CommissionSettings() {
-  const { data: commissions } = useQuery<CommissionsDto>(
+  const { data: commissions, isLoading } = useQuery<CommissionsDto>(
     "commission",
     "/admin/settings/commission"
   );
@@ -73,39 +74,49 @@ export default function CommissionSettings() {
             <Separator />
           </div>
           <form className="capitalize flex-1  gap-7 flex flex-col justify-evenly">
-            {commissionFields.map((field) => (
-              <div key={field} className="flex flex-col gap-2  justify-between">
-                <Label
-                  htmlFor={field}
-                  className="text-primary text-lg font-medium"
-                >
-                  Commission for {field}
-                </Label>
-                <Input
-                  id={field}
-                  type="number"
-                  placeholder={`Enter Commission for ${field}`}
-                  className="h-13 placeholder:capitalize"
-                  value={
-                    field === "rides"
-                      ? fields?.rides
-                      : field === "orders"
-                      ? fields?.orders
-                      : fields?.drivers
-                  }
-                  onChange={(e) =>
-                    setFields(
-                      (prev) =>
-                        ({ ...prev, [field]: e.target.value } as {
-                          rides: string;
-                          orders: string;
-                          drivers: string;
-                        })
-                    )
-                  }
-                />
-              </div>
-            ))}
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex flex-col gap-2 justify-between">
+                    <Skeleton className="h-6 w-32 bg-gray-400/30" />
+                    <Skeleton className="h-12 w-full bg-gray-400/30" />
+                  </div>
+                ))
+              : commissionFields.map((field) => (
+                  <div
+                    key={field}
+                    className="flex flex-col gap-2  justify-between"
+                  >
+                    <Label
+                      htmlFor={field}
+                      className="text-primary text-lg font-medium"
+                    >
+                      Commission for {field}
+                    </Label>
+                    <Input
+                      id={field}
+                      type="number"
+                      placeholder={`Enter Commission for ${field}`}
+                      className="h-13 placeholder:capitalize"
+                      value={
+                        field === "rides"
+                          ? fields?.rides
+                          : field === "orders"
+                          ? fields?.orders
+                          : fields?.drivers
+                      }
+                      onChange={(e) =>
+                        setFields(
+                          (prev) =>
+                            ({ ...prev, [field]: e.target.value } as {
+                              rides: string;
+                              orders: string;
+                              drivers: string;
+                            })
+                        )
+                      }
+                    />
+                  </div>
+                ))}
             <Button
               disabled={isPending}
               type="button"

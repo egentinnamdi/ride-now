@@ -6,6 +6,7 @@ import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
 import { useQuery } from "@/hooks/useQuery";
 import { NoTransactions } from "../multi-page/NoTransactions";
+import { Skeleton } from "../ui/skeleton";
 
 const className = "flex flex-col  rounded-2xl p-4  justify-between w-2/4 h-40";
 
@@ -39,13 +40,15 @@ type AdminTransactionsResponseDto = {
 
 export default function RidesAndOrders() {
   const [data, setData] = useState<RideTransactionDto[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   // Get All rides completed
-  const { data: completedRides } = useQuery<{
+  const { data: completedRides, isLoading: isSummaryLoading } = useQuery<{
     ridesCompleted: number;
   }>("completed-rides", "/admin/rides/summary");
 
-  function syncData(values: AdminTransactionsResponseDto) {
+  function syncData(values: AdminTransactionsResponseDto, isLoading: boolean) {
     setData(values.transactions);
+    setIsLoading(isLoading);
   }
 
   return (
@@ -56,18 +59,26 @@ export default function RidesAndOrders() {
             <CarFront />
             <span className=" font-semibold">Rides completed</span>
           </div>
-          <span className="text-2xl font-semibold text-gray-700">
-            {completedRides?.ridesCompleted.toLocaleString() || "0"} rides
-          </span>
+          {isSummaryLoading ? (
+            <Skeleton className="h-8 w-32" />
+          ) : (
+            <span className="text-2xl font-semibold text-gray-700">
+              {completedRides?.ridesCompleted.toLocaleString() || "0"} rides
+            </span>
+          )}
         </div>
         <div className={cn("bg-background/10", className)}>
           <div className="flex items-center gap-2 text-primary">
             <CarFront />
             <span className=" font-semibold">Orders completed</span>
           </div>
-          <span className="text-2xl font-semibold text-gray-400">
-            13,456 rides
-          </span>
+          {isSummaryLoading ? (
+            <Skeleton className="h-8 w-32" />
+          ) : (
+            <span className="text-2xl font-semibold text-gray-400">
+              13,456 rides
+            </span>
+          )}
         </div>
       </div>
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
@@ -75,12 +86,13 @@ export default function RidesAndOrders() {
         key="rides-transactions"
         endpoint="/admin/rides/transactions"
         syncData={syncData}
+        queryKey="rides-transactions"
       >
-        {data?.length ? (
-          <RevenueTable headerItems={tableHeaders} tableData={data} />
-        ) : (
-          <NoTransactions />
-        )}
+        <RevenueTable
+          headerItems={tableHeaders}
+          tableData={data ?? []}
+          isLoading={isLoading}
+        />
       </Transactions>
     </TabsContent>
   );

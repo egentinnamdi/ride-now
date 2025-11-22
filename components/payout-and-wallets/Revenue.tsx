@@ -7,6 +7,10 @@ import { useQuery } from "@/hooks/useQuery";
 import { getFormattedDate } from "@/lib/utils";
 import { ITransactionData } from "@/types/transactions";
 import { NoTransactions } from "../multi-page/NoTransactions";
+import PaginationComponent from "../ui/PaginationComponent";
+import DateInput from "../multi-page/DateInput";
+import { monthsOfTheYear } from "@/lib/constants";
+import { Skeleton } from "../ui/skeleton";
 
 const timeInterval = ["monthly", "weekly", "daily", "all-time"];
 const tableHeaders = [
@@ -32,6 +36,7 @@ export default function Revenue() {
 
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [stringifiedDate, setStringifiedDate] = useState<string | undefined>();
+  const [page, setPage] = useState<number>(1);
 
   const [parameters, setParameters] = useState({
     timeframe: "monthly",
@@ -46,10 +51,10 @@ export default function Revenue() {
   }
 
   // Get Total Revenue
-  const { data: revenueData } = useQuery<TotalRevenue>(
+  const { data: revenueData, isLoading: isFetching } = useQuery<TotalRevenue>(
     "revenue",
     "/admin/revenue/total",
-    { ...parameters, startDate: stringifiedDate ?? "" }
+    parameters
   );
 
   // Get Revenue Transactions
@@ -57,13 +62,12 @@ export default function Revenue() {
     stringifiedDate?.split("-")[1] ?? (today.getMonth() + 1).toString();
   const year = stringifiedDate?.split("-")[0] ?? today.getFullYear().toString();
 
-  const { data: revenueTransactions } = useQuery<ITransactionData>(
-    "revenueTransactions",
-    "/admin/revenue/transactions",
-    { limit: "10", page: "1", month, year }
-  );
-
-  console.log(revenueTransactions?.transactions);
+  const { data: revenueTransactions, isLoading: isTransactionsLoading } =
+    useQuery<ITransactionData>(
+      "revenueTransactions",
+      "/admin/revenue/transactions",
+      { limit: "10", page: page.toString(), month, year }
+    );
 
   return (
     <TabsContent value="revenue">
@@ -77,9 +81,13 @@ export default function Revenue() {
         >
           <div className="flex text-gray-600 text-xl font-semibold flex-col gap-2">
             <span>Total Revenue</span>
-            <span className="text-primary text-3xl">
-              &#8358;{revenueData?.totalRevenue?.toLocaleString() || "0"}.00
-            </span>
+            {!isFetching ? (
+              <span className="text-primary text-3xl">
+                &#8358;{revenueData?.totalRevenue?.toLocaleString() || "0"}.00
+              </span>
+            ) : (
+              <Skeleton className="h-7 w-35" />
+            )}
           </div>
           <TabsList className="bg-white">
             {timeInterval.map((item) => (
@@ -95,25 +103,44 @@ export default function Revenue() {
           {timeInterval.map((item) => (
             <TabsContent key={item} value={item}>
               <ChartBar
-                chartData={revenueTransactions?.transactions ?? []}
+                chartData={
+                  Array.isArray(revenueData?.chartData)
+                    ? revenueData.chartData
+                    : []
+                }
                 date={date}
                 handleDateChange={handleDateChange}
               />
             </TabsContent>
           ))}
         </Tabs>
-        <div className="flex flex-col gap-7 mt-7">
-          <h3 className="text-2xl font-semibold text-gray-700">
-            Revenue in January
-          </h3>
-          {revenueTransactions?.transactions?.length ? (
-            <RevenueTable
-              headerItems={tableHeaders}
-              tableData={revenueTransactions?.transactions ?? []}
+        <div className="flex flex-col gap-5 -200 mt-7">
+          <div className="flex justify-between">
+            <h3 className="text-2xl  font-semibold text-gray-700">
+              Revenue in {monthsOfTheYear[+month - 1]}
+            </h3>
+            {/* <div className="flex items-center gap-3">
+              <span className="text-gray-500">Time Interval:</span>
+              <DateInput
+                label="Select a start date"
+                date={date}
+                handleDateChange={handleDateChange}
+              />
+            </div> */}
+          </div>
+          <RevenueTable
+            headerItems={tableHeaders}
+            tableData={revenueTransactions?.transactions ?? []}
+            isLoading={isTransactionsLoading}
+          />
+          {revenueTransactions?.pagination &&
+          revenueTransactions.pagination.totalPages > 1 ? (
+            <PaginationComponent
+              currentPage={revenueTransactions.pagination.page}
+              totalPages={revenueTransactions.pagination.totalPages}
+              onPageChange={(pageNumber) => setPage(pageNumber)}
             />
-          ) : (
-            <NoTransactions />
-          )}
+          ) : null}
         </div>
       </div>
     </TabsContent>
