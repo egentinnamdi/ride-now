@@ -47,10 +47,10 @@ export const data = {
         //   title: "Earnings Breakdown",
         //   url: "earning breakdown",
         // },
-        // {
-        //   title: "Pending Payouts",
-        //   url: "pending payouts",
-        // },
+        {
+          title: "Pending Payouts",
+          url: "pending payouts",
+        },
         {
           title: "Subscription Settings",
           url: "subscription settings",
@@ -86,10 +86,10 @@ export const data = {
           title: "Suspended Accounts",
           url: "suspended accounts",
         },
-        {
-          title: "Appeals",
-          url: "appeals",
-        },
+        // {
+        //   title: "Appeals",
+        //   url: "appeals",
+        // },
       ],
     },
     {

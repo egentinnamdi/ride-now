@@ -7,7 +7,12 @@ import { Button } from "../ui/button";
 import { ChevronDown, EllipsisVertical } from "lucide-react";
 import RevenueTable from "../payout-and-wallets/RevenueTable";
 import DriverInfo from "./DriverInfo";
-import { UserSummaryDto } from "@/types/userManagement";
+import {
+  DriverStatsDTO,
+  Pagination,
+  UserSummaryDto,
+} from "@/types/userManagement";
+import { useQuery } from "@/hooks/useQuery";
 
 const items = ["drivers", "riders", "passengers"];
 
@@ -21,85 +26,19 @@ const tableHeaders = [
   "Action",
 ];
 
-const tableData = [
-  {
-    id: "11156778",
-    name: "Kelechi Dure",
-    type: "Premium",
-    ["rides completed"]: 240,
-    ["average rating"]: 4.9,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156771",
-    name: "Ella Nwaogu",
-    type: "Regular",
-    ["rides completed"]: 180,
-    ["average rating"]: 4.5,
-    status: "Pending",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156772",
-    name: "Chioma Okafor",
-    type: "Regular",
-    ["rides completed"]: 96,
-    ["average rating"]: 4.1,
-    status: "Declined",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156773",
-    name: "Emeka Uche",
-    type: "Premium",
-    ["rides completed"]: 305,
-    ["average rating"]: 4.8,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156774",
-    name: "Adaeze Nwosu",
-    type: "Regular",
-    ["rides completed"]: 120,
-    ["average rating"]: 4.3,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156775",
-    name: "Tunde Afolabi",
-    type: "Premium",
-    ["rides completed"]: 275,
-    ["average rating"]: 4.7,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156776",
-    name: "Ngozi Obi",
-    type: "Regular",
-    ["rides completed"]: 150,
-    ["average rating"]: 4.6,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-];
+export interface DriverDTO {
+  drivers: Driver[];
+  pagination: Pagination;
+}
+
+export interface Driver {
+  id: string;
+  name: string;
+  type: "weekly" | "monthly" | "daily"; // extend if needed
+  ridesCompleted: number;
+  avgRating: number;
+  status: "online" | "offline" | "busy"; // extend if needed
+}
 
 export default function ViewAndManage({
   summary,
@@ -116,13 +55,40 @@ export default function ViewAndManage({
   function toggleDriverInfo(id: string) {
     setSeeDriver({ id, show: !show });
   }
+
+  // Get all Drivers
+  const [page, setPage] = useState(1);
+  const { data, isLoading: isFetching } = useQuery<DriverDTO>(
+    "drivers",
+    "/admin/drivers",
+    {
+      limit: "10",
+      page: page.toString(),
+    }
+  );
+
+  // Get Single Driver
+  const { data: driver, isLoading: isFetchingDriver } =
+    useQuery<DriverStatsDTO>("driver", `/admin/drivers/${id}`);
+
+  // Added Ellipsis Icon to table Data
+  const tableData = data?.drivers.map((item) => ({
+    ...item,
+    action: "",
+  }));
+
   return (
     <TabsContent
       className=" min-h-[50vh] px-10 py-5 pb-10"
       value="view and manage"
     >
       {show ? (
-        <DriverInfo id={id} toggleDriverInfo={toggleDriverInfo} />
+        <DriverInfo
+          isFetchingDriver={isFetchingDriver}
+          id={id}
+          driverDetails={driver ?? ({} as DriverStatsDTO)}
+          toggleDriverInfo={toggleDriverInfo}
+        />
       ) : (
         <Tabs defaultValue="drivers" className="space-y-7">
           <TabsList className=" w-full flex gap-2 py-8 px-1.5 bg-background/20 h-14">
@@ -201,7 +167,12 @@ export default function ViewAndManage({
                 </>
               }
             />
-            <RevenueTable headers={tableHeaders} data={tableData} />
+            <RevenueTable
+              headerItems={tableHeaders}
+              tableData={tableData ?? []}
+              isLoading={isFetching}
+              showDriver={toggleDriverInfo}
+            />
           </div>
         </Tabs>
       )}

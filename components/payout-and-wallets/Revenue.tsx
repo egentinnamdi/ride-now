@@ -6,9 +6,7 @@ import RevenueTable from "./RevenueTable";
 import { useQuery } from "@/hooks/useQuery";
 import { getFormattedDate } from "@/lib/utils";
 import { ITransactionData } from "@/types/transactions";
-import { NoTransactions } from "../multi-page/NoTransactions";
 import PaginationComponent from "../ui/PaginationComponent";
-import DateInput from "../multi-page/DateInput";
 import { monthsOfTheYear } from "@/lib/constants";
 import { Skeleton } from "../ui/skeleton";
 
@@ -26,7 +24,7 @@ type TotalRevenue = {
   chartData: {
     period: string;
     revenue: number;
-  };
+  }[];
 };
 
 export default function Revenue() {
@@ -103,11 +101,7 @@ export default function Revenue() {
           {timeInterval.map((item) => (
             <TabsContent key={item} value={item}>
               <ChartBar
-                chartData={
-                  Array.isArray(revenueData?.chartData)
-                    ? revenueData.chartData
-                    : []
-                }
+                transactions={revenueData?.chartData ?? []}
                 date={date}
                 handleDateChange={handleDateChange}
               />
@@ -119,14 +113,6 @@ export default function Revenue() {
             <h3 className="text-2xl  font-semibold text-gray-700">
               Revenue in {monthsOfTheYear[+month - 1]}
             </h3>
-            {/* <div className="flex items-center gap-3">
-              <span className="text-gray-500">Time Interval:</span>
-              <DateInput
-                label="Select a start date"
-                date={date}
-                handleDateChange={handleDateChange}
-              />
-            </div> */}
           </div>
           <RevenueTable
             headerItems={tableHeaders}

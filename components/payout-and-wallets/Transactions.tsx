@@ -24,7 +24,7 @@ export default function Transactions<T>({
   syncData: (data: T, isLoading: boolean) => void;
 }) {
   const today = new Date();
-  const [location, setLocation] = useState("lagos");
+  const [location, setLocation] = useState("Lagos");
   const [month, setMonth] = useState(today.getMonth().toString());
 
   const { data: result, isLoading } = useQuery<T>(queryKey, endpoint, {
@@ -56,7 +56,10 @@ export default function Transactions<T>({
         title={monthsOfTheYear[+month]}
         action={
           <>
-            <Select onValueChange={(val) => updateParameters("location", val)}>
+            <Select
+              value={location}
+              onValueChange={(val) => updateParameters("location", val)}
+            >
               <SelectTrigger className="shadow-none border-none">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
@@ -71,7 +74,10 @@ export default function Transactions<T>({
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Select onValueChange={(val) => updateParameters("month", val)}>
+            <Select
+              value={month}
+              onValueChange={(val) => updateParameters("month", val)}
+            >
               <SelectTrigger className="shadow-none border-none">
                 <SelectValue placeholder="Month" />
               </SelectTrigger>

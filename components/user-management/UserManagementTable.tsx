@@ -12,7 +12,11 @@ import { cn } from "@/lib/utils";
 import { EllipsisVertical } from "lucide-react";
 import PaginationComponent from "../ui/PaginationComponent";
 import { useQuery } from "@/hooks/useQuery";
-import { PendingApproval, PendingApprovalsDto } from "@/types/userManagement";
+import {
+  PendingApproval,
+  PendingApprovalsDto,
+  SuspendedAccountsDto,
+} from "@/types/userManagement";
 import { Skeleton } from "../ui/skeleton";
 import { NoTransactions } from "../multi-page/NoTransactions";
 
@@ -30,18 +34,30 @@ export default function UserManagementTable({
   type: string;
 }) {
   const [page, setPage] = useState<number>(1);
-  const { data: result, isLoading } = useQuery<PendingApprovalsDto>(
-    queryKey,
-    endpoint,
-    {
-      limit: "10",
-      page: page.toString(),
-    }
-  );
-  return (
+  const { data: result, isLoading } = useQuery<
+    PendingApprovalsDto | SuspendedAccountsDto
+  >(queryKey, endpoint, {
+    limit: "10",
+    page: page.toString(),
+  });
+
+  const tableData =
+    (result &&
+      (queryKey === "suspended-accounts"
+        ? (result as SuspendedAccountsDto).suspendedAccounts.filter(
+            (item) => item.userType === type
+          )
+        : (result as PendingApprovalsDto).pendingApprovals.filter(
+            (item) => item.userType === type
+          ))) ||
+    [];
+
+  const hasData = tableData.length > 0;
+
+  return isLoading || hasData ? (
     <Table className="bg-background/10 rounded-2xl px-10 py-5">
       <TableHeader>
-        <TableRow>
+        <TableRow className="border-none">
           {headers?.map((header) => (
             <TableHead
               key={header}
@@ -52,10 +68,9 @@ export default function UserManagementTable({
           ))}
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {isLoading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <TableRow key={i}>
+      {isLoading
+        ? Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i} className="border-none">
               {headers.map((item) => (
                 <TableCell
                   key={item}
@@ -66,52 +81,44 @@ export default function UserManagementTable({
               ))}
             </TableRow>
           ))
-        ) : result?.pendingApprovals &&
-          result?.pendingApprovals.filter((item) =>
-            item.userType.includes(type)
-          ).length > 0 ? (
-          result?.pendingApprovals
-            .filter((item) => item.userType.includes(type))
-            .map((item) => (
-              <TableRow
-                key={(item as { id?: string }).id ?? JSON.stringify(item)}
-              >
-                {Object.keys(item as Record<string, string>).map(
-                  (cell, index) => (
-                    <TableCell
-                      className={cn(
-                        "py-6 text-sm text-gray-500 capitalize font-semibold",
-                        className
-                      )}
-                      key={index}
-                    >
-                      {cell === "userType" && (
-                        <span className="text-green-600 border px-6 py-1.5 rounded-sm border-green-600 bg-green-600/5">
-                          {String(item[cell as keyof PendingApproval])}
-                        </span>
-                      )}
-                      {cell === "dateSubmitted" &&
-                        new Date(
-                          String(item[cell as keyof PendingApproval])
-                        ).toDateString()}
-                      {cell !== "userType" &&
-                        cell !== "dateSubmitted" &&
-                        String(item[cell as keyof PendingApproval])}
-                    </TableCell>
-                  )
+        : tableData.map((item) => (
+            <TableBody key={(item as { id?: string }).id}>
+              <TableRow className="border-none">
+                {Object.keys(item).map((cellKey, index) => (
+                  <TableCell
+                    className={cn(
+                      "py-6 text-sm text-gray-500 capitalize font-semibold",
+                      className
+                    )}
+                    key={index}
+                  >
+                    {cellKey === "userType" && (
+                      <span className="text-green-600 border px-6 py-1.5 rounded-sm border-green-600 bg-green-600/5">
+                        {String(item[cellKey as keyof typeof item])}
+                      </span>
+                    )}
+                    {(cellKey === "dateSubmitted" ||
+                      cellKey === "dateSuspended") &&
+                      new Date(
+                        String(item[cellKey as keyof typeof item])
+                      ).toDateString()}
+                    {cellKey !== "userType" &&
+                      cellKey !== "dateSubmitted" &&
+                      cellKey !== "dateSuspended" &&
+                      String(item[cellKey as keyof typeof item])}
+                  </TableCell>
+                ))}
+                {headers.includes("Action") && (
+                  <TableCell>
+                    <EllipsisVertical
+                      className="text-primary ml-3 text-md"
+                      size={17}
+                    />
+                  </TableCell>
                 )}
-                <TableCell>
-                  <EllipsisVertical
-                    className="text-primary ml-3 text-md"
-                    size={17}
-                  />
-                </TableCell>
               </TableRow>
-            ))
-        ) : (
-          <NoTransactions colSpan={headers.length} />
-        )}
-      </TableBody>
+            </TableBody>
+          ))}
       <TableFooter>
         {result?.pagination && result?.pagination.totalPages > 1 && (
           <PaginationComponent
@@ -122,5 +129,12 @@ export default function UserManagementTable({
         )}
       </TableFooter>
     </Table>
+  ) : (
+    <NoTransactions
+      queryKeys={[queryKey]}
+      message={`${type} ${
+        queryKey === "suspended-accounts" ? "suspended accounts" : "approvals"
+      }`}
+    />
   );
 }

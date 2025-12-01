@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { NoTransactions } from "../multi-page/NoTransactions";
 import { Skeleton } from "../ui/skeleton";
+import { EllipsisVertical } from "lucide-react";
 
 type TableType<T> = {
   headerItems: Array<string>;
@@ -18,6 +19,7 @@ type TableType<T> = {
   children?: React.ReactNode;
   className?: string;
   isLoading?: boolean;
+  showDriver?: (id: string) => void;
 };
 
 export default function RevenueTable<T>({
@@ -27,6 +29,7 @@ export default function RevenueTable<T>({
   children,
   className,
   isLoading,
+  showDriver,
 }: TableType<T>) {
   return (
     <div className="flex flex-col gap-10">
@@ -64,14 +67,14 @@ export default function RevenueTable<T>({
           </TableBody>
         </Table>
       ) : !tableData?.length ? (
-        <NoTransactions colSpan={headerItems.length} />
+        <NoTransactions />
       ) : (
         <Table className="bg-background/10 p-5 rounded-sm">
           <TableHeader>
             <TableRow className="capitalize">
               {headerItems.map((item) => (
                 <TableHead
-                  className="text-primary px-8  py-7 text-base"
+                  className="text-primary px-8  py-7 text-xs font-semibold"
                   key={item}
                 >
                   {item}
@@ -81,7 +84,11 @@ export default function RevenueTable<T>({
           </TableHeader>
           <TableBody>
             {tableData.map((cell, index) => (
-              <TableRow key={index}>
+              <TableRow
+                className="cursor-pointer"
+                onClick={() => showDriver?.((cell as { id: string }).id)}
+                key={index}
+              >
                 {Object.keys(cell as Record<string, string | number>).map(
                   (item) => (
                     <TableCell
@@ -96,6 +103,14 @@ export default function RevenueTable<T>({
                       >
                         {String(cell[item as keyof T])}
                       </span>
+                      {item === "action" && (
+                        <div className=" flex justify-center">
+                          <EllipsisVertical
+                            className="text-primary  text-md"
+                            size={17}
+                          />
+                        </div>
+                      )}
                     </TableCell>
                   )
                 )}

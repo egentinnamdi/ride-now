@@ -14,36 +14,34 @@ const tableHeaders = [
   "Status",
 ];
 
-type TransactionsDto = {
-  id: string;
-  day: string;
-  customer: string;
-  location: string;
-  transactionAmount: number;
-  status: string;
+type PendingPayoutsDto = {
+  id: "string";
+  customer: "string";
+  transactionAmount: 0;
+  requestDate: "string";
 }[];
 
-type TransactionsAndPaginationDto = {
-  transactions: TransactionsDto;
+type PayoutsAndPaginationDto = {
+  payouts: PendingPayoutsDto;
   pagination: PaginationResponseDto;
 };
 
-export default function TransactionHistory() {
-  const [data, setData] = useState<TransactionsDto | null>(null);
+export default function PendingPayouts() {
+  const [data, setData] = useState<PendingPayoutsDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  function syncData(values: TransactionsAndPaginationDto, isLoading: boolean) {
-    setData(values.transactions);
+  function syncData(values: PayoutsAndPaginationDto, isLoading: boolean) {
+    setData(values.payouts);
     setIsLoading(isLoading);
   }
 
   return (
-    <TabsContent value="transaction history" className="p-10  flex-1  pt-0">
+    <TabsContent value="pending payouts" className="p-10  flex-1  pt-0">
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
       <Transactions
         syncData={syncData}
-        endpoint="/admin/transactions"
-        queryKey="transaction-history"
+        endpoint="/admin/payouts/pending"
+        queryKey="pending-payouts"
       >
         <RevenueTable
           headerItems={tableHeaders}

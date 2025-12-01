@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
-import { Button } from "../ui/button";
 
 import UserManagementTable from "./UserManagementTable";
 import {
@@ -19,7 +17,7 @@ const interval = ["monthly", "weekly", "daily", "all-time"];
 const headers = ["ID", "Name", "Type", "Date Submitted", "Status", "Action"];
 
 export default function PendingApprovals() {
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<string>("driver");
   return (
     <TabsContent value="pending approval" className="p-10 space-y-9">
       <h2 className="text-2xl font-semibold text-gray-600">
@@ -40,25 +38,21 @@ export default function PendingApprovals() {
           </TabsList>
           <div className="flex items-center capitalize font-semibold text-background gap-3 px-4">
             <span>Filter by:</span>
-            <Select onValueChange={(val) => setType(val)}>
-              <SelectTrigger className="shadow-none border-none">
+            <Select value={type} onValueChange={(val) => setType(val)}>
+              <SelectTrigger className="shadow-none capitalize border-none">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Select Type</SelectLabel>
-                  {["driver"].map((item) => (
-                    <SelectItem key={item} value={item}>
+                  {["driver", "rider"].map((item) => (
+                    <SelectItem key={item} className="capitalize" value={item}>
                       {item}
                     </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <ChevronDown size={20} className="text-primary" />
-            <Button className="text-gray-600  bg-green-100">Order</Button>
-            <Download size={17} className="text-primary ml-2" />
-            <EllipsisVertical size={17} className="text-primary" /> */}
           </div>
         </div>
         {interval.map((item) => (

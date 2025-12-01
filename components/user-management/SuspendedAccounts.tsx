@@ -1,67 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { Button } from "../ui/button";
 
 import UserManagementTable from "./UserManagementTable";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const interval = ["monthly", "weekly", "daily", "all-time"];
 
 const headers = ["ID", "Name", "Type", "Date Suspended", "Reason", "Action"];
 
-const data = [
-  {
-    id: "11156778",
-    name: "Kelechi Dure",
-    type: "vendor",
-    dateSuspended: "31st May, 2025",
-    reason: "Reported by passenger",
-  },
-  {
-    id: "11156771",
-    name: "Ella Nwaogu",
-    type: "Rider",
-    dateSuspended: "31st May, 2025",
-    reason: "Went off app",
-  },
-  {
-    id: "11156772",
-    name: "Chioma Okafor",
-    type: "vendor",
-    dateSuspended: "31st May, 2025",
-    reason: "Reported by passenger",
-  },
-  {
-    id: "11156773",
-    name: "Emeka Uche",
-    type: "rider",
-    dateSuspended: "31st May, 2025",
-    reason: "Went off app",
-  },
-  {
-    id: "11156774",
-    name: "Adaeze Nwosu",
-    type: "vendor",
-    dateSuspended: "31st May, 2025",
-    reason: "Went off app",
-  },
-  {
-    id: "11156775",
-    name: "Tunde Afolabi",
-    type: "rider",
-    dateSuspended: "31st May, 2025",
-    reason: "Went off app",
-  },
-  {
-    id: "11156776",
-    name: "Ngozi Obi",
-    type: "rider",
-    dateSuspended: "31st May, 2025",
-    reason: "Went off app",
-  },
-];
 const className = "py-6 text-base text-gray-500 capitalize font-semibold";
 export default function SuspendedAccounts() {
+  const [type, setType] = useState("driver");
+
   return (
     <TabsContent value="suspended accounts" className="p-10 space-y-9">
       <h2 className="text-2xl font-semibold text-gray-600">
@@ -82,18 +42,32 @@ export default function SuspendedAccounts() {
           </TabsList>
           <div className="flex items-center capitalize font-semibold text-background gap-3 px-4">
             <span>Filter by:</span>
-            <span className="text-gray-500">type</span>
-            <ChevronDown size={20} className="text-primary" />
-            <span className="text-green-600 border px-6 py-2 rounded-sm border-green-600 bg-green-600/5">
-              Vendor
-            </span>
-            <Download size={17} className="text-primary ml-2" />
-            <EllipsisVertical size={17} className="text-primary" />
+            <Select value={type} onValueChange={(val) => setType(val)}>
+              <SelectTrigger className="shadow-none capitalize border-none">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Select Type</SelectLabel>
+                  {["driver", "rider", "vendor", "admin"].map((item) => (
+                    <SelectItem key={item} className="capitalize" value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         {interval.map((item) => (
           <TabsContent className="h-full" key={item} value={item}>
-            <UserManagementTable headers={headers} data={data} className="" />
+            <UserManagementTable
+              queryKey="suspended-accounts"
+              endpoint="/admin/users/suspended"
+              headers={headers}
+              type={type}
+              className=""
+            />
           </TabsContent>
         ))}
       </Tabs>

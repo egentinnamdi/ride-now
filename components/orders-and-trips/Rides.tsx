@@ -105,7 +105,7 @@ export default function Rides({
     if (rides) {
       updateTotal?.(rides.pagination.total);
     }
-  }, [rides]);
+  }, [rides, updateTotal]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);

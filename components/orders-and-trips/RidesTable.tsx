@@ -71,7 +71,7 @@ export default function RidesTable<T>({
             <TableRow className="capitalize ">
               {headerItems.map((item) => (
                 <TableHead
-                  className="text-primary text-center  py-7 text-base"
+                  className="text-primary text-center  py-7 text-xs font-semibold"
                   key={item}
                 >
                   {item}

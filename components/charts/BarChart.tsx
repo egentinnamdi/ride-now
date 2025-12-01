@@ -26,7 +26,6 @@ import { Separator } from "../ui/separator";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
-import { ITransaction, ITransactionData } from "@/types/transactions";
 
 // const chartData = [
 //   { month: "January", revenue: 500 },
@@ -55,16 +54,29 @@ export function ChartBar({
   date,
   handleDateChange,
 }: {
-  transactions: ITransaction[];
+  transactions: {
+    period: string;
+    revenue: number;
+  }[];
   date: Date | undefined;
   handleDateChange: (date: Date) => void;
 }) {
-  const chartData = transactions?.map((transaction) => {
-    const date = new Date(transaction.day);
-    const month = date.toLocaleDateString("en-US", { month: "long" });
-    const revenue = transaction.revenueEarned;
-    return { month, revenue };
-  });
+  // Filter chart data by month and sort
+  const chartData = transactions
+    ?.filter((transaction) => {
+      const month = date
+        ?.toLocaleDateString("en-US", { month: "long" })
+        .slice(0, 3);
+      const period = transaction.period;
+
+      return period.split(" ").at(1) === month;
+    })
+    .sort((a, b) => {
+      const dayOne = Number(a.period.split(" ")[0]);
+      const dayTwo = Number(b.period.split(" ")[0]);
+
+      return dayOne - dayTwo;
+    });
 
   const [open, setOpen] = useState(false);
   return (
@@ -105,28 +117,38 @@ export function ChartBar({
         </div>
       </CardHeader>
       <Separator />
-      <CardContent>
-        <ChartContainer className="h-[30vh] w-full" config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} horizontal={false} />
-            <XAxis
-              dataKey="month"
-              fontSize={18}
-              fontWeight={600}
-              color="#fff"
-              tickLine={false}
-              tickMargin={12}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Bar dataKey="revenue" fill="var(--color-background)" radius={8} />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
+      {chartData.length ? (
+        <CardContent>
+          <ChartContainer className="h-[30vh] w-full" config={chartConfig}>
+            <BarChart accessibilityLayer data={chartData}>
+              <CartesianGrid vertical={false} horizontal={false} />
+              <XAxis
+                dataKey="period"
+                fontSize={18}
+                fontWeight={600}
+                color="#fff"
+                tickLine={false}
+                tickMargin={12}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar
+                dataKey="revenue"
+                fill="var(--color-background)"
+                radius={8}
+              />
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+      ) : (
+        <div className="grid place-items-center h-40 text-gray-600 text-lg">
+          <span>No data to display</span>
+        </div>
+      )}
     </Card>
   );
 }

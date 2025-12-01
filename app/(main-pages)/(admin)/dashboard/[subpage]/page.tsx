@@ -17,6 +17,9 @@ import SuspendedAccounts from "@/components/user-management/SuspendedAccounts";
 import AddCoupon from "@/components/coupon-management/AddCoupon";
 import { SigninResponseDto } from "@/types/auth";
 import Rides from "@/components/orders-and-trips/Rides";
+import { useQuery } from "@/hooks/useQuery";
+import { UserSummaryDto } from "@/types/userManagement";
+import PendingPayouts from "@/components/payout-and-wallets/PendingPayouts";
 
 const rides = [
   { title: "ongoing orders/rides", status: "in_progress" },
@@ -36,8 +39,12 @@ export default function Dashboard() {
   const [totalOngoing, setTotalOngoing] = useState(0);
   const [totalCancelled, setTotalCancelled] = useState(0);
   const router = useRouter();
-  const userJson = localStorage.getItem("/auth/signin");
-  const user: SigninResponseDto | null = userJson ? JSON.parse(userJson) : null;
+  const [[timeframe], setTimeframe] = useState<Array<string>>(["monthly"]);
+  const { data: summary, isLoading } = useQuery<UserSummaryDto>(
+    "users-summary",
+    "/admin/users/summary",
+    { timeframe }
+  );
 
   useEffect(() => {
     setCurrentTab(tab);
@@ -100,11 +107,16 @@ export default function Dashboard() {
           <Revenue />
           <RidesAndOrders />
           <TransactionHistory />
+          <PendingPayouts />
           <SubscriptionSetting />
           <CommissionSettings />
           {/* User Management */}
-          <TotalUsers />
-          <ViewAndManage />
+          <TotalUsers
+            handleTimeframeChange={(val) => setTimeframe(val)}
+            isLoading={isLoading}
+            summary={summary}
+          />
+          <ViewAndManage summary={summary} isLoading={isLoading} />
           <PendingApprovals />
           <SuspendedAccounts />
 

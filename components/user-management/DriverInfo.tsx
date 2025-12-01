@@ -1,9 +1,14 @@
+"use client";
 import { Ban, CarFront, ChevronLeft, Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { DriverStatsDTO } from "@/types/userManagement";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useMutation } from "@/hooks/useMutation";
+import { SuspensionDialog, SuspensionFormValues } from "./SuspensionDialog";
+import { Skeleton } from "../ui/skeleton";
 
-const driverDetails = [
+const initialInfo = [
   {
     label: "Full name",
     value: "Kelechi Duru",
@@ -41,14 +46,82 @@ const driverDetails = [
 ];
 
 export default function DriverInfo({
-  id,
+  driverDetails,
   toggleDriverInfo,
+  id,
+  isFetchingDriver,
 }: {
+  isFetchingDriver: boolean;
   id: string;
+  driverDetails: DriverStatsDTO;
   toggleDriverInfo: (id: string) => void;
 }) {
-  const [driverInfo, setDriverInfo] =
-    useState<typeof driverDetails>(driverDetails);
+  const [driverInfo, setDriverInfo] = useState<typeof initialInfo>(initialInfo);
+  const [dialogState, setDialogState] = useState<{
+    isOpen: boolean;
+    variant?: "suspend" | "delete" | "restore";
+  }>({ isOpen: false });
+
+  useEffect(() => {
+    setDriverInfo((prev) =>
+      prev.map((item) => ({
+        ...item,
+        value: driverDetails.name,
+      }))
+    );
+  }, [driverDetails]);
+
+  // Handle Suspension and Deletion of Driver
+  const { mutate: suspendDriver, isPending: isSuspending } = useMutation(
+    `/admin/drivers/${id}/suspend`,
+    {
+      method: "POST",
+      invalidateKeys: ["driver"],
+      successMsg: "Account suspended",
+    }
+  );
+
+  const { mutate: deleteDriver, isPending: isDeleting } = useMutation(
+    `/admin/drivers/${id}`,
+    {
+      method: "DELETE",
+      invalidateKeys: ["driver"],
+      successMsg: "Account deleted successfully",
+    }
+  );
+
+  const { mutate: restoreDriver, isPending: isRestoring } = useMutation(
+    `/admin/drivers/${id}/unsuspend`,
+    {
+      method: "POST",
+      invalidateKeys: ["driver"],
+      successMsg: "Account restored",
+    }
+  );
+
+  function handleAction(data: SuspensionFormValues | object) {
+    switch (dialogState.variant) {
+      case "suspend":
+        suspendDriver({ ...data });
+        break;
+      case "delete":
+        deleteDriver({});
+        break;
+      case "restore":
+        restoreDriver({});
+        break;
+      default:
+        break;
+    }
+    setDialogState({ isOpen: false });
+  }
+
+  const openDialog = (variant: "suspend" | "delete" | "restore") => {
+    setDialogState({ isOpen: true, variant });
+  };
+
+  // const isSuspended = driverDetails?.driverDetails.status !== "active";
+
   return (
     <div className="">
       <div
@@ -61,27 +134,80 @@ export default function DriverInfo({
       <div className="min-h-[20vh] flex gap-3">
         <div className="flex gap-5 p-3 w-3/5  shadow-xs">
           <div className="size-40 w-1/4 ">
-            <Image
-              src="/driver-profile.png"
-              alt="driver"
-              width={500}
-              height={500}
-              className="size-full object-cover rounded-sm"
-            />
+            <Avatar
+              className="
+            size-full object-cover rounded-sm"
+            >
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
           </div>
           <div className="flex flex-col justify-between w-3/4 p-1.5">
             <h3 className="text-2xl font-semibold flex items-center gap-9 text-gray-700">
-              <span className="text-primary  font-semibold">Kelechi Duru</span>
-              <span className="text-base bg-green-50 text-green-700 px-5 py-0.5 rounded-sm  ">
-                Subscriber
-              </span>
+              {!isFetchingDriver ? (
+                <span className="text-primary  font-semibold">
+                  {driverDetails?.name}
+                </span>
+              ) : (
+                <Skeleton className="h-7 w-30" />
+              )}
+              {!isFetchingDriver ? (
+                <span className="text-base capitalize bg-green-50 text-green-700 px-5 py-0.5 rounded-sm  ">
+                  {driverDetails.planType}
+                </span>
+              ) : (
+                <Skeleton className="h-7 w-20" />
+              )}
             </h3>
-            <p className="text-sm text-gray-500">4</p>
-            <div className="flex justify-between">
-              <Button className="bg-[#F18359] w-[230px] text-base  h-14">
-                Suspend Account
-              </Button>
-              <Button className="bg-red-600 text-base w-[230px] h-14">
+            {!isFetchingDriver ? (
+              <p className="text-sm text-gray-500 font-medium ">
+                {driverDetails.rating}
+              </p>
+            ) : (
+              <Skeleton className="h-5 w-20" />
+            )}
+
+            <div className="flex justify-between gap-5">
+              {driverDetails?.driverDetails?.status === "active" ? (
+                <Button
+                  disabled={isSuspending}
+                  onClick={() =>
+                    setDialogState((prev) => ({
+                      ...prev,
+                      variant: "suspend",
+                      isOpen: true,
+                    }))
+                  }
+                  className="bg-[#F18359] w-[230px] text-base  h-14"
+                >
+                  Suspend Account
+                </Button>
+              ) : (
+                <Button
+                  disabled={isRestoring}
+                  onClick={() =>
+                    setDialogState((prev) => ({
+                      ...prev,
+                      variant: "restore",
+                      isOpen: true,
+                    }))
+                  }
+                  className="bg-[#359150] w-[230px] text-base  h-14"
+                >
+                  Restore Account
+                </Button>
+              )}
+              <Button
+                disabled={isDeleting}
+                onClick={() =>
+                  setDialogState((prev) => ({
+                    ...prev,
+                    variant: "delete",
+                    isOpen: true,
+                  }))
+                }
+                className="bg-red-600 text-base w-[230px] h-14"
+              >
                 Delete Account
               </Button>
             </div>
@@ -93,21 +219,39 @@ export default function DriverInfo({
               <CarFront size={35} />
               <p className="">Total Earned</p>
             </div>
-            <p className="text-2xl font-bold text-gray-600">₦100,000</p>
+            {!isFetchingDriver ? (
+              <p className="text-2xl font-bold text-gray-600">
+                ₦{driverDetails.totalEarned?.toLocaleString()}
+              </p>
+            ) : (
+              <Skeleton className="h-7 w-30" />
+            )}
           </div>
           <div className="bg-green-50 w-1/4 rounded-xl p-3 flex flex-col justify-between">
             <div className="text-green-600 font-bold space-y-1 text-lg">
               <CarFront size={34} />
               <p className="">Completed</p>
             </div>
-            <p className="text-lg font-bold text-gray-600">300 rides</p>
+            {!isFetchingDriver ? (
+              <p className="text-lg font-bold text-gray-600">
+                {driverDetails.totalRidesCompleted} rides
+              </p>
+            ) : (
+              <Skeleton className="h-7 w-20 bg-green-100" />
+            )}
           </div>
           <div className="bg-red-50 w-1/4 rounded-xl p-3 flex flex-col justify-between">
             <div className="text-red-600 font-bold space-y-1 text-lg">
               <Ban size={34} />
               <p className="">Cancelled</p>
             </div>
-            <p className="text-lg font-bold text-gray-600">36 rides</p>
+            {!isFetchingDriver ? (
+              <p className="text-lg font-bold text-gray-600">
+                {driverDetails.totalCanceledRides} rides
+              </p>
+            ) : (
+              <Skeleton className="h-7 w-20 bg-red-100" />
+            )}
           </div>
         </div>
       </div>
@@ -174,6 +318,15 @@ export default function DriverInfo({
       <div className="flex flex-col gap-5 py-3">
         <h2 className="text-xl font-bold text-gray-600">All transactions</h2>
       </div>
+      {dialogState.variant && (
+        <SuspensionDialog
+          isOpen={dialogState.isOpen}
+          onOpenChange={(isOpen) => setDialogState({ isOpen })}
+          onSubmit={handleAction}
+          variant={dialogState.variant}
+          driverName={driverDetails?.name}
+        />
+      )}
     </div>
   );
 }

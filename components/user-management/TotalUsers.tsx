@@ -5,27 +5,9 @@ import Text from "../utility/Text";
 import { PieChartRing } from "../charts/PieChartRing";
 import ManagementItem from "./ManagementItem";
 import { Skeleton } from "../ui/skeleton";
+import { UserSummaryDto } from "@/types/userManagement";
 
-type UserSummaryDto = {
-  avgDriverRating: number;
-  commissionDrivers: number;
-  dailyActiveUsers: number;
-  subscribedDrivers: number;
-  totalDrivers: number;
-  totalRiders: number;
-  totalRidesCompleted: number;
-  totalUsers: number;
-  percentageChanges: {
-    avgDriverRating: number;
-    commissionDrivers: number;
-    dailyActiveUsers: number;
-    subscribedDrivers: number;
-    totalDrivers: number;
-    totalRiders: number;
-    totalRidesCompleted: number;
-    totalUsers: number;
-  };
-};
+
 
 export const timeInterval = ["all-time", "yearly", "monthly", "weekly"];
 export default function TotalUsers({
