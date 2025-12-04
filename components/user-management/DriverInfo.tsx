@@ -1,8 +1,8 @@
 "use client";
-import { Ban, CarFront, ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { Ban, CarFront, ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { DriverStatsDTO } from "@/types/userManagement";
+import { DriverDetails, DriverStatsDTO } from "@/types/userManagement";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useMutation } from "@/hooks/useMutation";
 import { SuspensionDialog, SuspensionFormValues } from "./SuspensionDialog";
@@ -120,8 +120,6 @@ export default function DriverInfo({
     setDialogState({ isOpen: true, variant });
   };
 
-  // const isSuspended = driverDetails?.driverDetails.status !== "active";
-
   return (
     <div className="">
       <div
@@ -170,7 +168,7 @@ export default function DriverInfo({
             <div className="flex justify-between gap-5">
               {driverDetails?.driverDetails?.status === "active" ? (
                 <Button
-                  disabled={isSuspending}
+                  disabled={isSuspending || isFetchingDriver}
                   onClick={() =>
                     setDialogState((prev) => ({
                       ...prev,
@@ -184,7 +182,7 @@ export default function DriverInfo({
                 </Button>
               ) : (
                 <Button
-                  disabled={isRestoring}
+                  disabled={isRestoring || isFetchingDriver}
                   onClick={() =>
                     setDialogState((prev) => ({
                       ...prev,
@@ -257,60 +255,20 @@ export default function DriverInfo({
       </div>
       <div className="flex flex-col gap-5 py-10">
         <h2 className="text-xl font-bold text-gray-600">Driver Details</h2>
-        <div className="h-[50vh] grid bg-background/10 rounded-lg grid-cols-2 p-5 grid-rows-4 gap-5">
-          {driverInfo.map((detail) => (
+        <div className="min-1/4 grid bg-background/10 rounded-lg grid-cols-2 p-10 gap-5">
+          {Object.keys(driverDetails.driverDetails ?? {}).map((detail) => (
             <div
-              key={detail.label}
-              className="border-b flex flex-col justify-center"
+              key={detail}
+              className="border-b flex flex-col gap-2 capitalize justify-center"
             >
               {/* Label */}
-              <span className="text-sm font-semibold text-gray-400">
-                {detail.label}
+              <span className="text-sm  font-semibold text-gray-400">
+                {detail}
               </span>
-
               {/* Value */}
-              {detail.label === "Status" ? (
-                <span className="text-base font-semibold text-green-700">
-                  {detail.value}
-                </span>
-              ) : detail.label === "BVN" || detail.label === "NIN" ? (
-                <div className="flex justify-between">
-                  <span className="text-base font-semibold text-gray-800">
-                    {detail.show ? detail.value : "**********"}
-                  </span>
-                  <div
-                    onClick={() =>
-                      setDriverInfo(
-                        driverInfo.map((item) =>
-                          item.label === detail.label
-                            ? {
-                                ...item,
-                                show: !item.show,
-                              }
-                            : item
-                        )
-                      )
-                    }
-                    className="text-primary flex text-sm items-center gap-1 pr-2 cursor-pointer"
-                  >
-                    {detail.show ? (
-                      <>
-                        <EyeOff size={18} />
-                        <span>Hide</span>
-                      </>
-                    ) : (
-                      <>
-                        <Eye size={18} />
-                        <span>View</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <span className="text-base font-semibold text-gray-800">
-                  {detail.value}
-                </span>
-              )}
+              <span className="text-base font-semibold text-gray-800">
+                {driverDetails.driverDetails[detail as keyof DriverDetails]}
+              </span>
             </div>
           ))}
         </div>

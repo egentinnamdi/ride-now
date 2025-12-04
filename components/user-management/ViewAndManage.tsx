@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import ManagementItem from "./ManagementItem";
 import TableTitle from "../payout-and-wallets/TableTitle";
 import { Button } from "../ui/button";
-import { ChevronDown, EllipsisVertical } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import RevenueTable from "../payout-and-wallets/RevenueTable";
 import DriverInfo from "./DriverInfo";
 import {

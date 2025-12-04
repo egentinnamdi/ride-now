@@ -5,17 +5,19 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
-import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import CouponTable from "./CouponTable";
 import { useMutation } from "@/hooks/useMutation";
 import { CouponResponse } from "@/types/coupon";
 import { Dialog } from "../ui/dialog";
+import { toast } from "sonner";
 
 export default function AddCoupon() {
   const [couponCode, setCouponCode] = useState("");
   const [validity, setValidity] = useState("");
   const [limit, setLimit] = useState("");
   const [open, setOpen] = useState(false);
+  const [createdBy, setCreatedBy] = useState("");
+  const [validTill, setValidTill] = useState(new Date().toISOString());
 
   const { mutate, isPending } = useMutation<
     CouponResponse,
@@ -32,6 +34,10 @@ export default function AddCoupon() {
 
   const handleAddCoupon = () => {
     try {
+      if (!couponCode || !validity || !limit) {
+        toast.error("Please fill in all fields");
+        return;
+      }
       mutate({
         couponCode,
         validityPeriod: validity,
@@ -43,6 +49,9 @@ export default function AddCoupon() {
       setLimit("");
     }
   };
+  function handleCloseDialog() {
+    setOpen(false);
+  }
 
   return (
     <TabsContent
@@ -113,21 +122,27 @@ export default function AddCoupon() {
             <h3 className="flex-1 font-medium text-xl">all coupons</h3>
             <div className="flex justify-end items-center gap-6 min-w-2/4 font-medium">
               <span className="text-background">Filter by:</span>
-              <span className="text-gray-500">type</span>
-              <ChevronDown size={20} className="text-primary" />
-              <span className="text-gray-500">Created By</span>
-              <span className="text-gray-600 px-6 py-2 rounded-sm font-semibold bg-pink-300">
-                Ella Nwaogu
-              </span>
+              <Input
+                className="placeholder:capitalize placeholder:text-gray-600 text-gray-600 h-9 border-primary  rounded-sm w-1/5 "
+                placeholder="Created By"
+                value={createdBy}
+                onChange={(e) => setCreatedBy(e.target.value)}
+              />
               <span className="text-gray-500">Valid Till</span>
-              <span className="text-gray-600 px-6 py-2 rounded-sm font-semibold bg-background">
-                21/08/25
-              </span>
-              <Download size={17} className="text-primary ml-2" />
-              <EllipsisVertical size={17} className="text-primary" />
+              <Input
+                type="date"
+                className="placeholder:capitalize border-none w-1/4  text-gray-600  bg-background h-10 rounded-sm"
+                placeholder="Coupon Validity Period"
+                value={validTill}
+                onChange={(e) => setValidTill(e.target.value)}
+              />
             </div>
           </div>
-          <CouponTable />
+          <CouponTable
+            handleCloseDialog={handleCloseDialog}
+            createdBy={createdBy}
+            validTill={validTill}
+          />
         </div>
       </Dialog>
     </TabsContent>

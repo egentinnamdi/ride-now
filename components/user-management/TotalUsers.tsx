@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Text from "../utility/Text";
@@ -6,8 +6,6 @@ import { PieChartRing } from "../charts/PieChartRing";
 import ManagementItem from "./ManagementItem";
 import { Skeleton } from "../ui/skeleton";
 import { UserSummaryDto } from "@/types/userManagement";
-
-
 
 export const timeInterval = ["all-time", "yearly", "monthly", "weekly"];
 export default function TotalUsers({
@@ -27,7 +25,6 @@ export default function TotalUsers({
 
   //   return () => toast.dismiss(loadingId);
   // }, [isLoading, summary]);
-  console.log(summary);
   return (
     <TabsContent className=" min-h-[50vh]" value="total number of users">
       <Tabs

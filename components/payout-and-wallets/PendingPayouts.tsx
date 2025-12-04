@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import { TabsContent } from "../ui/tabs";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
-import { NoTransactions } from "../multi-page/NoTransactions";
 import { PaginationResponseDto } from "./RidesAndOrders";
 
 const tableHeaders = [
-  "ID",
-  "Day",
+  "Identification Number",
   "Customer",
-  "Location",
   "Transaction Amount",
-  "Status",
+  "Requested Date",
 ];
 
 type PendingPayoutsDto = {
@@ -34,7 +31,6 @@ export default function PendingPayouts() {
     setData(values.payouts);
     setIsLoading(isLoading);
   }
-
   return (
     <TabsContent value="pending payouts" className="p-10  flex-1  pt-0">
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}

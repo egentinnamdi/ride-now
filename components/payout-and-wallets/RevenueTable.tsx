@@ -95,14 +95,23 @@ export default function RevenueTable<T>({
                       key={item}
                       className="font-medium  capitalize text-gray-400 py-5  text-xs"
                     >
-                      <span
-                        className={cn(
-                          "text-gray-600 px-6 py-2 rounded-sm font-semibold",
-                          className
-                        )}
-                      >
-                        {String(cell[item as keyof T])}
-                      </span>
+                      {item === "requestDate" && (
+                        <span className="text-gray-600 px-6   font-semibold">
+                          {new Date(
+                            String(cell[item as keyof T])
+                          ).toDateString()}
+                        </span>
+                      )}
+                      {item !== "requestDate" && (
+                        <span
+                          className={cn(
+                            "text-gray-600 px-7 py-2 rounded-sm font-semibold",
+                            className
+                          )}
+                        >
+                          {String(cell[item as keyof T])}
+                        </span>
+                      )}
                       {item === "action" && (
                         <div className=" flex justify-center">
                           <EllipsisVertical

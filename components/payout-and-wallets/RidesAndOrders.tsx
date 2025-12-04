@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
 import { useQuery } from "@/hooks/useQuery";
-import { NoTransactions } from "../multi-page/NoTransactions";
 import { Skeleton } from "../ui/skeleton";
 
 const className = "flex flex-col  rounded-2xl p-4  justify-between w-2/4 h-40";

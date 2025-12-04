@@ -49,7 +49,7 @@ export default function ManagementItem({
           )}
         </div>
         <Trend
-          isUp={percentageChange ? true : false}
+          isUp={!percentageChange.toString().includes("-") ? true : false}
           value={percentageChange}
         />
       </div>
