@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen relative">
+    <div className="min-h-screen relative ">
       {/* Background layer */}
       <div className="absolute justify-end gap-30  inset-0 -z-10 flex flex-col ">
         <div className=" w-full">

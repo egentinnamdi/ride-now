@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { TabsContent } from "../ui/tabs";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
+import { NoTransactions } from "../multi-page/NoTransactions";
+import { PaginationResponseDto } from "./RidesAndOrders";
+import { endpoints } from "@/lib/endpoints";
 
 const tableHeaders = [
   "ID",
@@ -12,71 +15,42 @@ const tableHeaders = [
   "Status",
 ];
 
-const tableData = [
-  {
-    id: "11156778",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "abuja",
-    amount: 11350,
-    status: "successful",
-  },
-  {
-    id: "11156771",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "lagos",
-    amount: 11350,
-    status: "pending",
-  },
-  {
-    id: "11156772",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "Asaba",
-    amount: 11350,
-    status: "declined",
-  },
-  {
-    id: "11156773",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "abuja",
-    amount: 11350,
-    status: "successful",
-  },
-  {
-    id: "11156774",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "asaba",
-    amount: 11350,
-    status: "successful",
-  },
-  {
-    id: "11156775",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "lagos",
-    amount: 11350,
-    status: "successful",
-  },
-  {
-    id: "11156776",
-    day: "31st Jan 2025",
-    customer: "ella nwaogu",
-    location: "abuja",
-    amount: 11350,
-    status: "successful",
-  },
-];
+type TransactionsDto = {
+  id: string;
+  day: string;
+  customer: string;
+  location: string;
+  transactionAmount: number;
+  status: string;
+}[];
+
+type TransactionsAndPaginationDto = {
+  transactions: TransactionsDto;
+  pagination: PaginationResponseDto;
+};
 
 export default function TransactionHistory() {
+  const [data, setData] = useState<TransactionsDto | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  function syncData(values: TransactionsAndPaginationDto, isLoading: boolean) {
+    setData(values.transactions);
+    setIsLoading(isLoading);
+  }
+
   return (
-    <TabsContent value="transaction history" className="p-10 pt-0">
+    <TabsContent value="transaction history" className="p-10  flex-1  pt-0">
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
-      <Transactions title="January">
-        <RevenueTable headers={tableHeaders} data={tableData} />
+      <Transactions
+        syncData={syncData}
+        endpoint={endpoints.admin.transactions}
+        queryKey="transaction-history"
+      >
+        <RevenueTable
+          headerItems={tableHeaders}
+          tableData={data ?? []}
+          isLoading={isLoading}
+        />
       </Transactions>
     </TabsContent>
   );

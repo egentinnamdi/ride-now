@@ -4,9 +4,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import ManagementItem from "./ManagementItem";
 import TableTitle from "../payout-and-wallets/TableTitle";
 import { Button } from "../ui/button";
-import { ChevronDown, EllipsisVertical } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import RevenueTable from "../payout-and-wallets/RevenueTable";
 import DriverInfo from "./DriverInfo";
+import {
+  DriverStatsDTO,
+  Pagination,
+  UserSummaryDto,
+} from "@/types/userManagement";
+import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 
 const items = ["drivers", "riders", "passengers"];
 
@@ -20,99 +27,71 @@ const tableHeaders = [
   "Action",
 ];
 
-const tableData = [
-  {
-    id: "11156778",
-    name: "Kelechi Dure",
-    type: "Premium",
-    ["rides completed"]: 240,
-    ["average rating"]: 4.9,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156771",
-    name: "Ella Nwaogu",
-    type: "Regular",
-    ["rides completed"]: 180,
-    ["average rating"]: 4.5,
-    status: "Pending",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156772",
-    name: "Chioma Okafor",
-    type: "Regular",
-    ["rides completed"]: 96,
-    ["average rating"]: 4.1,
-    status: "Declined",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156773",
-    name: "Emeka Uche",
-    type: "Premium",
-    ["rides completed"]: 305,
-    ["average rating"]: 4.8,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156774",
-    name: "Adaeze Nwosu",
-    type: "Regular",
-    ["rides completed"]: 120,
-    ["average rating"]: 4.3,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156775",
-    name: "Tunde Afolabi",
-    type: "Premium",
-    ["rides completed"]: 275,
-    ["average rating"]: 4.7,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-  {
-    id: "11156776",
-    name: "Ngozi Obi",
-    type: "Regular",
-    ["rides completed"]: 150,
-    ["average rating"]: 4.6,
-    status: "Successful",
-    action: (
-      <EllipsisVertical className="text-primary ml-3 text-md" size={20} />
-    ),
-  },
-];
+export interface DriverDTO {
+  drivers: Driver[];
+  pagination: Pagination;
+}
 
-export default function ViewAndManage() {
+export interface Driver {
+  id: string;
+  name: string;
+  type: "weekly" | "monthly" | "daily"; // extend if needed
+  ridesCompleted: number;
+  avgRating: number;
+  status: "online" | "offline" | "busy"; // extend if needed
+}
+
+export default function ViewAndManage({
+  summary,
+  isLoading,
+}: {
+  summary: UserSummaryDto | undefined;
+  isLoading: boolean;
+}) {
   const [{ id, show }, setSeeDriver] = useState<{ id: string; show: boolean }>({
     id: "",
-    show: true,
+    show: false,
   });
 
   function toggleDriverInfo(id: string) {
     setSeeDriver({ id, show: !show });
   }
+
+  // Get all Drivers
+  const [page, setPage] = useState(1);
+  const { data, isLoading: isFetching } = useQuery<DriverDTO>(
+    "drivers",
+    endpoints.admin.drivers.all,
+    {
+      limit: "10",
+      page: page.toString(),
+    }
+  );
+
+  // Get Single Driver
+  const { data: driver, isLoading: isFetchingDriver } = useQuery<DriverStatsDTO>(
+    "driver",
+    endpoints.admin.drivers.detail(id)
+  );
+
+  // Added Ellipsis Icon to table Data
+  const tableData = data?.drivers.map((item) => ({
+    ...item,
+    action: "",
+  }));
+
   return (
-    <TabsContent className=" min-h-[50vh] px-10 py-5" value="view and manage">
+    <TabsContent
+      className=" min-h-[50vh] px-10 py-5 pb-10"
+      value="view and manage"
+    >
       {show ? (
-        <DriverInfo id={id} toggleDriverInfo={toggleDriverInfo} />
+        <DriverInfo
+          isFetchingDriver={isFetchingDriver}
+          id={id}
+          driverDetails={driver ?? ({} as DriverStatsDTO)}
+          toggleDriverInfo={toggleDriverInfo}
+        />
       ) : (
         <Tabs defaultValue="drivers" className="space-y-7">
           <TabsList className=" w-full flex gap-2 py-8 px-1.5 bg-background/20 h-14">
@@ -129,36 +108,53 @@ export default function ViewAndManage() {
           <div>
             <div className="flex gap-7 h-[35vh] ">
               <ManagementItem
-                total={210000}
+                isLoading={isLoading}
+                total={summary?.commissionDrivers ?? 0}
                 text="commission drivers"
+                percentageChange={
+                  summary?.percentageChanges.commissionDrivers ?? 0
+                }
                 className="w-1/3 justify-between"
                 hiddenBtn={true}
               />
               <ManagementItem
-                total={24567}
+                isLoading={isLoading}
+                total={summary?.subscribedDrivers ?? 0}
                 text="subscribed drivers"
+                percentageChange={
+                  summary?.percentageChanges.subscribedDrivers ?? 0
+                }
                 className="w-1/3 justify-between"
                 hiddenBtn={true}
               />
+
               <div className="w-1/3  flex flex-col gap-7">
                 <ManagementItem
-                  total={23678}
+                  total={summary?.totalRidesCompleted ?? 0}
                   text="total rides completed"
                   className="h-2/4"
                   hiddenAvatar={true}
                   hiddenBtn={true}
+                  isLoading={isLoading}
+                  percentageChange={
+                    summary?.percentageChanges.totalRidesCompleted ?? 0
+                  }
                 />
                 <ManagementItem
-                  total={3.8}
+                  total={summary?.avgDriverRating ?? 0}
                   text="avg driver rating"
                   className="h-2/4 bg-orange-300/20 text-orange-500"
                   hiddenAvatar={true}
                   hiddenBtn={true}
+                  percentageChange={
+                    summary?.percentageChanges.avgDriverRating ?? 0
+                  }
+                  isLoading={isLoading}
                 />
               </div>
             </div>
           </div>
-          <div className="capitalize space-y-9 mt-7">
+          <div className="capitalize space-y-3 mt-7">
             <TableTitle
               title="all drivers"
               action={
@@ -174,7 +170,12 @@ export default function ViewAndManage() {
                 </>
               }
             />
-            <RevenueTable headers={tableHeaders} data={tableData} />
+            <RevenueTable
+              headerItems={tableHeaders}
+              tableData={tableData ?? []}
+              isLoading={isFetching}
+              showDriver={toggleDriverInfo}
+            />
           </div>
         </Tabs>
       )}

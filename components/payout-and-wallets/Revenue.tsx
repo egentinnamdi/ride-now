@@ -1,38 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar } from "../charts/BarChart";
 import RevenueTable from "./RevenueTable";
-import { useQuey } from "@/hooks/useQuery";
+import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
+import { getFormattedDate } from "@/lib/utils";
+import { ITransactionData } from "@/types/transactions";
+import PaginationComponent from "../ui/PaginationComponent";
+import { monthsOfTheYear } from "@/lib/constants";
+import { Skeleton } from "../ui/skeleton";
 
 const timeInterval = ["monthly", "weekly", "daily", "all-time"];
-const tableHeaders = ["ID", "Day", "Type", "Revenue Earned (N)"];
-
-const tableData = [
-  {
-    id: "11156778",
-    day: "31st Jan 2025",
-    type: "order",
-    revenue: 11350,
-  },
-  {
-    id: "11156798",
-    day: "31st Jan 2025",
-    type: "order",
-    revenue: 11350,
-  },
-  {
-    id: "11156768",
-    day: "31st Jan 2025",
-    type: "order",
-    revenue: 11350,
-  },
-  {
-    id: "11156758",
-    day: "31st Jan 2025",
-    type: "order",
-    revenue: 11350,
-  },
+const tableHeaders = [
+  "Identification Number",
+  "Day",
+  "Type",
+  "Revenue Earned (N)",
 ];
 
 type TotalRevenue = {
@@ -41,22 +25,75 @@ type TotalRevenue = {
   chartData: {
     period: string;
     revenue: number;
-  };
+  }[];
 };
 
 export default function Revenue() {
-  const revenueData = useQuey<TotalRevenue>("revenue", "/admin/revenue/total", {
-    timeframe: "monthly",
-  });
+  const today = new Date();
+  const lastMonth = new Date();
+  lastMonth.setMonth(today.getMonth() - 1);
+
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [stringifiedDate, setStringifiedDate] = useState<string | undefined>();
+  const [page, setPage] = useState<number>(1);
+  const [timeframe, setTimeframe] = useState("monthly");
+
+  function handleDateChange(date: Date) {
+    const formattedDate = getFormattedDate(date);
+    setStringifiedDate(formattedDate);
+    setDate(date);
+  }
+
+  // Selected month's date range, recomputed on every date-picker change so
+  // the revenue-total query actually reflects the month being viewed.
+  const selectedDate = date ?? today;
+  const rangeStart = stringifiedDate
+    ? getFormattedDate(
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+      )
+    : getFormattedDate(lastMonth);
+  const rangeEnd = stringifiedDate
+    ? getFormattedDate(
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+      )
+    : getFormattedDate(today);
+
+  // Get Total Revenue
+  const { data: revenueData, isLoading: isFetching } = useQuery<TotalRevenue>(
+    "revenue",
+    endpoints.admin.revenue.total,
+    { timeframe, startDate: rangeStart, endDate: rangeEnd }
+  );
+
+  // Get Revenue Transactions
+  const month =
+    stringifiedDate?.split("-")[1] ?? (today.getMonth() + 1).toString();
+  const year = stringifiedDate?.split("-")[0] ?? today.getFullYear().toString();
+
+  const { data: revenueTransactions, isLoading: isTransactionsLoading } =
+    useQuery<ITransactionData>(
+      "revenueTransactions",
+      endpoints.admin.revenue.transactions,
+      { limit: "10", page: page.toString(), month, year }
+    );
+
   return (
     <TabsContent value="revenue">
       <div className="bg-white  p-10 pt-7  gap-4 ">
-        <Tabs defaultValue="monthly" className="flex flex-col gap-10">
+        <Tabs
+          onValueChange={setTimeframe}
+          defaultValue="monthly"
+          className="flex flex-col gap-10"
+        >
           <div className="flex text-gray-600 text-xl font-semibold flex-col gap-2">
             <span>Total Revenue</span>
-            <span className="text-primary text-3xl">
-              ${revenueData?.data?.totalRevenue || "0.00"}
-            </span>
+            {!isFetching ? (
+              <span className="text-primary text-3xl">
+                &#8358;{revenueData?.totalRevenue?.toLocaleString() || "0"}.00
+              </span>
+            ) : (
+              <Skeleton className="h-7 w-35" />
+            )}
           </div>
           <TabsList className="bg-white">
             {timeInterval.map((item) => (
@@ -71,15 +108,33 @@ export default function Revenue() {
           </TabsList>
           {timeInterval.map((item) => (
             <TabsContent key={item} value={item}>
-              <ChartBar />
+              <ChartBar
+                transactions={revenueData?.chartData ?? []}
+                date={date}
+                handleDateChange={handleDateChange}
+              />
             </TabsContent>
           ))}
         </Tabs>
-        <div className="flex flex-col gap-7 mt-7">
-          <h3 className="text-2xl font-semibold text-gray-700">
-            Revenue in January
-          </h3>
-          <RevenueTable headers={tableHeaders} data={tableData} />
+        <div className="flex flex-col gap-5 -200 mt-7">
+          <div className="flex justify-between">
+            <h3 className="text-2xl  font-semibold text-gray-700">
+              Revenue in {monthsOfTheYear[+month - 1]}
+            </h3>
+          </div>
+          <RevenueTable
+            headerItems={tableHeaders}
+            tableData={revenueTransactions?.transactions ?? []}
+            isLoading={isTransactionsLoading}
+          />
+          {revenueTransactions?.pagination &&
+          revenueTransactions.pagination.totalPages > 1 ? (
+            <PaginationComponent
+              currentPage={revenueTransactions.pagination.page}
+              totalPages={revenueTransactions.pagination.totalPages}
+              onPageChange={(pageNumber) => setPage(pageNumber)}
+            />
+          ) : null}
         </div>
       </div>
     </TabsContent>

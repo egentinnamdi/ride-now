@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -6,6 +7,26 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import PasswordInput from "./PasswordInput";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useMutation } from "@/hooks/useMutation";
+
+export const signUpData = {
+  user_type: "",
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  password: "",
+  confirm_password: "",
+};
 
 export default function SignUpForm({
   updateStep,
@@ -14,11 +35,23 @@ export default function SignUpForm({
   updateStep: (step: number) => void;
   action: string;
 }) {
-  // Using password input component instead of managing state here
-  // const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState(signUpData);
+  const [passwordError, setPasswordError] = useState(false);
+  // const signUpMutate = useMutation({
+  //   endpoint: endpoints.auth.signup,
+  //   method: "POST",
+  // });
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(formData);
+    // signUpMutate(formData);
+
+    setFormData(signUpData);
+  }
 
   return (
-    <div className="relative flex flex-col justify-center  py-10 px-5 z-20 h-full">
+    <div className="relative flex flex-col justify-center gap-5  py-10 px-5 z-20 h-full">
       <div className="flex flex-col justify-center gap-2 h-1/5">
         <h2 className="text-3xl font-medium">Hey there!</h2>
         <span className="font-normal">
@@ -28,30 +61,133 @@ export default function SignUpForm({
         </span>
       </div>
       <div className="h-4/5">
-        <div className=" flex  flex-col justify-around items-center rounded-3xl p-4 gap-4 bg-gray-50 min-h-3/6">
+        <form
+          onSubmit={handleSubmit}
+          className=" flex  flex-col justify-around items-center rounded-3xl px-5 py-8 gap-5 bg-gray-50 min-h-3/6"
+        >
+          <div className="space-y-2 w-full text-gray-400">
+            <Label className="text-xs" htmlFor="email">
+              Role
+            </Label>
+            <Select
+              value={formData.user_type}
+              onValueChange={(val) =>
+                setFormData((prev) => ({ ...prev, user_type: val }))
+              }
+            >
+              <SelectTrigger className="w-full h-10 text-xs! text-gray-400">
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Roles</SelectLabel>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="driver">Driver</SelectItem>
+                  <SelectItem value="rider">Rider</SelectItem>
+                  <SelectItem value="vendor">Vendor</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2 w-full text-gray-400">
+            <Label className="text-xs" htmlFor="email">
+              First Name
+            </Label>
+            <Input
+              value={formData.firstName}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, firstName: e.target.value }))
+              }
+              type="text"
+              id="firstName"
+              placeholder="Enter First Name"
+              className="placeholder:text-xs h-10 placeholder:text-gray-400"
+            />
+          </div>
+          <div className="space-y-2 w-full text-gray-400">
+            <Label className="text-xs" htmlFor="email">
+              Last Name
+            </Label>
+            <Input
+              value={formData.lastName}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, lastName: e.target.value }))
+              }
+              type="text"
+              id="lastName"
+              placeholder="Enter Last Name"
+              className="placeholder:text-xs h-10 placeholder:text-gray-400"
+            />
+          </div>
+          <div className="space-y-2 w-full text-gray-400">
+            <Label className="text-xs" htmlFor="email">
+              Phone
+            </Label>
+            <Input
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
+              type="tel"
+              id="phone"
+              placeholder="Enter Phone Number"
+              className="placeholder:text-xs h-10 placeholder:text-gray-400"
+            />
+          </div>
           <div className="space-y-2 w-full text-gray-400">
             <Label className="text-xs" htmlFor="email">
               Email
             </Label>
             <Input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
               type="email"
               id="email"
               placeholder="Enter your email"
               className="placeholder:text-xs h-10 placeholder:text-gray-400"
             />
           </div>
-          <PasswordInput label="password" placeholder="enter your password" />
+          <PasswordInput
+            value={formData.password}
+            handleChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                password: e.target.value,
+              }))
+            }
+            label="password"
+            placeholder="enter your password"
+          />
           {action === "sign-up" && (
             <PasswordInput
+              handleChange={(e) =>
+                setFormData((prev) => {
+                  const password = e.target.value;
+                  if (prev.password !== e.target.value) {
+                    setPasswordError(true);
+                    return prev;
+                  } else {
+                    setPasswordError(false);
+                    return { ...prev, password, confirm_password: password };
+                  }
+                })
+              }
               label="confirm password"
               placeholder="confirm your password"
             />
           )}
-          <Button onClick={() => updateStep(3)} className="!p-5">
+          {passwordError && (
+            <span className="text-red-500 text-xs w-full font-medium ">
+              Confirm password must match the password.
+            </span>
+          )}
+          <Button type="submit" className="!p-5">
             <ArrowRight />
             <span>{action === "sign-in" ? "Sign in" : "Sign up"}</span>{" "}
           </Button>
-        </div>
+        </form>
         <div
           className={`${
             action === "sign-in" ? "mt-7" : "mt-3"
@@ -59,7 +195,9 @@ export default function SignUpForm({
         >
           <div className="flex text-xs text-primary-dark gap-1 font-medium  flex-col items-center justify-between">
             {action === "sign-in" ? (
-              <Link href={"/welcome/1"}>Don&apos;t have an account? Sign up</Link>
+              <Link href={"/welcome/1"}>
+                Don&apos;t have an account? Sign up
+              </Link>
             ) : (
               <span>or</span>
             )}
@@ -95,3 +233,4 @@ export default function SignUpForm({
     </div>
   );
 }
+// onClick={() => updateStep(3)}

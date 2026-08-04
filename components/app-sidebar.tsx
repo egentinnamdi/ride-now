@@ -36,6 +36,10 @@ export const data = {
           url: "revenue",
         },
         {
+          title: "Payouts Overview",
+          url: "payouts overview",
+        },
+        {
           title: "Total Rides & Orders",
           url: "rides and orders",
         },
@@ -43,10 +47,10 @@ export const data = {
           title: "Transaction History",
           url: "transaction history",
         },
-        {
-          title: "Earnings Breakdown",
-          url: "earning breakdown",
-        },
+        // {
+        //   title: "Earnings Breakdown",
+        //   url: "earning breakdown",
+        // },
         {
           title: "Pending Payouts",
           url: "pending payouts",
@@ -59,10 +63,10 @@ export const data = {
           title: "Commission Settings",
           url: "commission settings",
         },
-        {
-          title: "Delivery Price",
-          url: "delivery price",
-        },
+        // {
+        //   title: "Delivery Price",
+        //   url: "delivery price",
+        // },
       ],
     },
     {
@@ -86,10 +90,10 @@ export const data = {
           title: "Suspended Accounts",
           url: "suspended accounts",
         },
-        {
-          title: "Appeals",
-          url: "appeals",
-        },
+        // {
+        //   title: "Appeals",
+        //   url: "appeals",
+        // },
       ],
     },
     {
@@ -99,11 +103,11 @@ export const data = {
       items: [
         {
           title: "Ongoing Orders / Rides",
-          url: "ongoing rides",
+          url: "ongoing orders/rides",
         },
         {
-          title: "completed Orders / Rides",
-          url: "completed rides",
+          title: "Completed Orders / Rides",
+          url: "completed orders/rides",
         },
         {
           title: "Cancellations & Reasons",
@@ -120,10 +124,10 @@ export const data = {
           title: "Add a Coupon",
           url: "add coupon",
         },
-        {
-          title: "All Coupons",
-          url: "all coupon",
-        },
+        // {
+        //   title: "All Coupons",
+        //   url: "all coupon",
+        // },
       ],
     },
   ],
@@ -152,7 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <Collapsible
             key={navItem.title}
             title={navItem.title}
-            defaultOpen
+            defaultOpen={false}
             className="group/collapsible"
           >
             <SidebarGroup>
@@ -172,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {navItem.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          className="hover:!bg-gray-300 data-[active=true]:!bg-gray-300 data-[active=true]:!font-bold  !h-11 text-base text-gray-300"
+                          className="hover:!bg-gray-300 data-[active=true]:!bg-gray-300 data-[active=true]:!font-bold pl-5 !h-11 text-base text-gray-300"
                           asChild
                           isActive={tab === item.url ? true : false}
                         >
