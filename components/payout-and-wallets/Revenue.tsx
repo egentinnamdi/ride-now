@@ -36,12 +36,7 @@ export default function Revenue() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [stringifiedDate, setStringifiedDate] = useState<string | undefined>();
   const [page, setPage] = useState<number>(1);
-
-  const [parameters, setParameters] = useState({
-    timeframe: "monthly",
-    startDate: stringifiedDate || getFormattedDate(lastMonth),
-    endDate: getFormattedDate(today),
-  });
+  const [timeframe, setTimeframe] = useState("monthly");
 
   function handleDateChange(date: Date) {
     const formattedDate = getFormattedDate(date);
@@ -49,11 +44,25 @@ export default function Revenue() {
     setDate(date);
   }
 
+  // Selected month's date range, recomputed on every date-picker change so
+  // the revenue-total query actually reflects the month being viewed.
+  const selectedDate = date ?? today;
+  const rangeStart = stringifiedDate
+    ? getFormattedDate(
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+      )
+    : getFormattedDate(lastMonth);
+  const rangeEnd = stringifiedDate
+    ? getFormattedDate(
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+      )
+    : getFormattedDate(today);
+
   // Get Total Revenue
   const { data: revenueData, isLoading: isFetching } = useQuery<TotalRevenue>(
     "revenue",
     endpoints.admin.revenue.total,
-    parameters
+    { timeframe, startDate: rangeStart, endDate: rangeEnd }
   );
 
   // Get Revenue Transactions
@@ -72,9 +81,7 @@ export default function Revenue() {
     <TabsContent value="revenue">
       <div className="bg-white  p-10 pt-7  gap-4 ">
         <Tabs
-          onValueChange={(val) =>
-            setParameters((prev) => ({ ...prev, timeframe: val }))
-          }
+          onValueChange={setTimeframe}
           defaultValue="monthly"
           className="flex flex-col gap-10"
         >
