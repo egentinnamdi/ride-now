@@ -35,7 +35,7 @@ export default function RidesTable<T>({
         {children}
       </div>
       {isLoading ? (
-        <Table className="bg-background/10 p-5 rounded-sm ">
+        <Table className=" p-5 rounded-sm bg-background/10">
           <TableHeader>
             <TableRow className="capitalize ">
               {headerItems.map((item) => (
@@ -86,11 +86,11 @@ export default function RidesTable<T>({
                   (item) => (
                     <TableCell
                       key={item}
-                      className="font-medium text-center capitalize text-gray-400 py-5 pl-3 text-xs"
+                      className="font-medium text-center capitalize  text-gray-400 py-5 pl-3 text-xs"
                     >
                       <span
                         className={cn(
-                          "text-gray-600 px-6 py-2 rounded-sm font-semibold",
+                          "text-gray-600 px-6 py-2 rounded-sm font-semibold w-24  text-ellipsis",
                           item === "location" && "bg-pink-300",
                           item === "status" &&
                             status === "cancelled" &&
@@ -102,13 +102,13 @@ export default function RidesTable<T>({
                             status === "completed" &&
                             "bg-green-200",
                           item !== "location" && item !== "status" && "px-0",
-                          className
+                          className,
                         )}
                       >
                         {String(cell[item as keyof T])}
                       </span>
                     </TableCell>
-                  )
+                  ),
                 )}
               </TableRow>
             ))}
