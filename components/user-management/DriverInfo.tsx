@@ -8,6 +8,10 @@ import { useMutation } from "@/hooks/useMutation";
 import { endpoints } from "@/lib/endpoints";
 import { SuspensionDialog, SuspensionFormValues } from "./SuspensionDialog";
 import { Skeleton } from "../ui/skeleton";
+import { useDriverTransactions } from "@/hooks/admin/useDriverTransactions";
+import { DriverTransaction } from "@/types/transactions";
+import RevenueTable from "../payout-and-wallets/RevenueTable";
+import PaginationComponent from "../ui/PaginationComponent";
 
 const initialInfo = [
   {
@@ -62,6 +66,11 @@ export default function DriverInfo({
     isOpen: boolean;
     variant?: "suspend" | "delete" | "restore";
   }>({ isOpen: false });
+  const [txPage, setTxPage] = useState(1);
+  const { data: transactions, isLoading: isFetchingTx } = useDriverTransactions(
+    id,
+    { page: txPage, limit: 10 }
+  );
 
   useEffect(() => {
     setDriverInfo((prev) =>
@@ -276,6 +285,18 @@ export default function DriverInfo({
       </div>
       <div className="flex flex-col gap-5 py-3">
         <h2 className="text-xl font-bold text-gray-600">All transactions</h2>
+        <RevenueTable<DriverTransaction>
+          headerItems={["ID", "Date", "Type", "Amount", "Description"]}
+          tableData={transactions?.transactions ?? []}
+          isLoading={isFetchingTx}
+        />
+        {transactions?.pagination && transactions.pagination.totalPages > 1 && (
+          <PaginationComponent
+            currentPage={transactions.pagination.page}
+            totalPages={transactions.pagination.totalPages}
+            onPageChange={setTxPage}
+          />
+        )}
       </div>
       {dialogState.variant && (
         <SuspensionDialog

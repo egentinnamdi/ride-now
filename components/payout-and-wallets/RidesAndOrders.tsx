@@ -76,7 +76,7 @@ export default function RidesAndOrders() {
             <Skeleton className="h-8 w-32" />
           ) : (
             <span className="text-2xl font-semibold text-gray-400">
-              13,456 rides
+              0 rides
             </span>
           )}
         </div>

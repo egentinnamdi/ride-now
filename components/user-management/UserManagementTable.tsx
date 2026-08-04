@@ -13,12 +13,18 @@ import { EllipsisVertical } from "lucide-react";
 import PaginationComponent from "../ui/PaginationComponent";
 import { useQuery } from "@/hooks/useQuery";
 import {
-  PendingApproval,
   PendingApprovalsDto,
   SuspendedAccountsDto,
 } from "@/types/userManagement";
 import { Skeleton } from "../ui/skeleton";
 import { NoTransactions } from "../multi-page/NoTransactions";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "../ui/menubar";
 
 export default function UserManagementTable({
   headers,
@@ -26,12 +32,14 @@ export default function UserManagementTable({
   queryKey,
   endpoint,
   type,
+  onViewDetails,
 }: {
   headers: Array<string>;
   className?: string;
   queryKey: string;
   endpoint: string;
   type: string;
+  onViewDetails: (id: string, userType: string) => void;
 }) {
   const [page, setPage] = useState<number>(1);
   const { data: result, isLoading } = useQuery<
@@ -70,16 +78,18 @@ export default function UserManagementTable({
       </TableHeader>
       {isLoading
         ? Array.from({ length: 5 }).map((_, i) => (
-            <TableRow key={i} className="border-none">
-              {headers.map((item) => (
-                <TableCell
-                  key={item}
-                  className="font-medium text-gray-400 py-5 pl-3 text-base"
-                >
-                  <Skeleton className="h-4 w-full bg-gray-400/30" />
-                </TableCell>
-              ))}
-            </TableRow>
+            <TableBody key={i}>
+              <TableRow className="border-none">
+                {headers.map((item) => (
+                  <TableCell
+                    key={item}
+                    className="font-medium text-gray-400 py-5 pl-3 text-base"
+                  >
+                    <Skeleton className="h-4 w-full bg-gray-400/30" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableBody>
           ))
         : tableData.map((item) => (
             <TableBody key={(item as { id?: string }).id}>
@@ -110,10 +120,28 @@ export default function UserManagementTable({
                 ))}
                 {headers.includes("Action") && (
                   <TableCell>
-                    <EllipsisVertical
-                      className="text-primary ml-3 text-md"
-                      size={17}
-                    />
+                    <Menubar className="bg-inherit border-none shadow-none">
+                      <MenubarMenu>
+                        <MenubarTrigger className="bg-inherit">
+                          <EllipsisVertical
+                            className="text-primary ml-3 text-md"
+                            size={17}
+                          />
+                        </MenubarTrigger>
+                        <MenubarContent>
+                          <MenubarItem
+                            onClick={() =>
+                              onViewDetails(
+                                (item as { id: string }).id,
+                                (item as { userType: string }).userType
+                              )
+                            }
+                          >
+                            View details
+                          </MenubarItem>
+                        </MenubarContent>
+                      </MenubarMenu>
+                    </Menubar>
                   </TableCell>
                 )}
               </TableRow>

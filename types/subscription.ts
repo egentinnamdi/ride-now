@@ -1,6 +1,6 @@
 export type SubscriptionPlan = {
   id: string;
-  planType: "weekly" | "commission";
+  planType: "weekly" | "yearly";
   price: number;
   durationDays: number;
   benefits: Record<string, unknown>;

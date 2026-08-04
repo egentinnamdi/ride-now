@@ -13,9 +13,11 @@ import { useQueryClient } from "@tanstack/react-query";
 export function NoTransactions({
   queryKeys,
   message,
+  btnText = "Refresh Table",
 }: {
   queryKeys?: Array<string>;
   message?: string;
+  btnText?: string;
 }) {
   const queryClient = useQueryClient();
   return (
@@ -38,7 +40,7 @@ export function NoTransactions({
               queryClient.invalidateQueries({ queryKey: queryKeys })
             }
           >
-            Refresh Table
+            {btnText}
           </Button>
         </div>
       </EmptyContent>

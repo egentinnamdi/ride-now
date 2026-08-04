@@ -73,7 +73,7 @@ export default function CouponTable({
       page: page.toString(),
       createdBy,
       validTill: validTill,
-    }
+    },
   );
   // Update Coupons
   const { mutate: updateCoupon, isPending } = useMutation(
@@ -82,7 +82,7 @@ export default function CouponTable({
       method: "PUT",
       invalidateKeys: ["coupons"],
       successMsg: "Coupon updated successfully",
-    }
+    },
   );
 
   // Update Coupon Function
@@ -153,8 +153,8 @@ export default function CouponTable({
                           {item === "validTill"
                             ? new Date(String(cell.validTill)).toDateString()
                             : item === "isActive"
-                            ? cell[item as keyof Coupon].toString()
-                            : cell[item as keyof Coupon]}
+                              ? cell[item as keyof Coupon].toString()
+                              : cell[item as keyof Coupon]}
                         </TableCell>
                       ))}
                       <TableCell>
@@ -191,7 +191,10 @@ export default function CouponTable({
                                     <Input
                                       type="date"
                                       className="placeholder:capitalize h-12 border border-primary/50"
-                                      placeholder="Coupon Validity Period"
+                                      placeholder={
+                                        cell["validTill"] ??
+                                        "Coupon Validity Period"
+                                      }
                                       value={validity}
                                       onChange={(e) =>
                                         setValidity(e.target.value)

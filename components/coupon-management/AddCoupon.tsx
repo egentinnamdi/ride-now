@@ -132,7 +132,7 @@ export default function AddCoupon() {
               <span className="text-gray-500">Valid Till</span>
               <Input
                 type="date"
-                className="placeholder:capitalize border-none w-1/4  text-gray-600  bg-background h-10 rounded-sm"
+                className="placeholder:capitalize border-none w-40 cursor-pointer  text-gray-600  bg-background h-10 rounded-sm"
                 placeholder="Coupon Validity Period"
                 value={validTill}
                 onChange={(e) => setValidTill(e.target.value)}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TabsContent } from "../ui/tabs";
 import RidesTable from "./RidesTable";
+import RideDetail from "./RideDetail";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { useQuery } from "@/hooks/useQuery";
 import { endpoints } from "@/lib/endpoints";
@@ -68,14 +69,23 @@ export default function Rides({
   const lastMonth = new Date();
   lastMonth.setMonth(today.getMonth() - 1);
   const { updateParameters, location, month } = useParams();
+  const [{ id, show }, setSeeRide] = useState<{ id: string; show: boolean }>({
+    id: "",
+    show: false,
+  });
+
+  function toggleRideDetail(id: string) {
+    setSeeRide((prev) => ({ id, show: !prev.show }));
+  }
+
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [page, setPage] = useState<number>(1);
   const [startDateString, setStartDateString] = useState<string>(
-    getFormattedDate(lastMonth)
+    getFormattedDate(lastMonth),
   );
   const [endDateString, setEndDateString] = useState<string>(
-    getFormattedDate(today)
+    getFormattedDate(today),
   );
 
   function handleStartDateChange(date: Date) {
@@ -99,7 +109,7 @@ export default function Rides({
       location,
       startDate: startDateString,
       endDate: endDateString,
-    }
+    },
   );
 
   useEffect(() => {
@@ -114,60 +124,69 @@ export default function Rides({
 
   return (
     <TabsContent value={title} className="p-10 flex flex-col ">
-      <RidesTable<Ride>
-        tableData={rides?.rides ?? []}
-        headerItems={headers}
-        title={status === "cancelled" ? "cancelled orders/rides" : title}
-        isLoading={isLoading}
-        status={status}
-      >
-        <div className="flex justify-end items-center gap-3 min-w-2/4 font-medium">
-          <span className="text-background">Filter by:</span>
+      {show ? (
+        <RideDetail id={id} toggleRideDetail={toggleRideDetail} />
+      ) : (
+        <>
+          <RidesTable<Ride>
+            tableData={rides?.rides ?? []}
+            headerItems={headers}
+            title={status === "cancelled" ? "cancelled orders/rides" : title}
+            isLoading={isLoading}
+            status={status}
+            onRowClick={toggleRideDetail}
+          >
+            <div className="flex justify-end items-center gap-3 min-w-2/4 font-medium">
+              <span className="text-background">Filter by:</span>
 
-          <Select onValueChange={(val) => updateParameters("location", val)}>
-            <SelectTrigger
-              className={`${
-                !location ? "bg-inherit" : "bg-pink-300 text-gray-600"
-              } shadow-none border-none`}
-            >
-              <SelectValue placeholder="Location" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Select a Location</SelectLabel>
-                {nigeriaStates.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <span className="text-gray-500">Time Interval:</span>
-          {/* <span className="px-6 py-2 rounded-sm text-white font-semibold bg-indigo-400">
-            ride
-          </span> */}
-          <DateInput
-            label="Select a start date"
-            date={startDate}
-            handleDateChange={handleStartDateChange}
-          />
-          <Separator>to</Separator>
-          <DateInput
-            label="Select an end date"
-            date={endDate}
-            handleDateChange={handleEndDateChange}
-          />
-          {/* <Download size={17} className="text-primary ml-2" />
-          <EllipsisVertical size={17} className="text-primary" /> */}
-        </div>
-      </RidesTable>
-      {rides?.pagination && rides.pagination.totalPages > 1 && (
-        <PaginationComponent
-          currentPage={rides.pagination.page}
-          totalPages={rides.pagination.totalPages}
-          onPageChange={handlePageChange}
-        />
+              <Select
+                onValueChange={(val) => updateParameters("location", val)}
+              >
+                <SelectTrigger
+                  className={`${
+                    !location ? "bg-inherit" : "bg-pink-300 text-gray-600"
+                  } shadow-none border-none`}
+                >
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select a Location</SelectLabel>
+                    {nigeriaStates.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <span className="text-gray-500">Time Interval:</span>
+              {/* <span className="px-6 py-2 rounded-sm text-white font-semibold bg-indigo-400">
+                ride
+              </span> */}
+              <DateInput
+                label="Select a start date"
+                date={startDate}
+                handleDateChange={handleStartDateChange}
+              />
+              <Separator>to</Separator>
+              <DateInput
+                label="Select an end date"
+                date={endDate}
+                handleDateChange={handleEndDateChange}
+              />
+              {/* <Download size={17} className="text-primary ml-2" />
+              <EllipsisVertical size={17} className="text-primary" /> */}
+            </div>
+          </RidesTable>
+          {rides?.pagination && rides.pagination.totalPages > 1 && (
+            <PaginationComponent
+              currentPage={rides.pagination.page}
+              totalPages={rides.pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
       )}
     </TabsContent>
   );

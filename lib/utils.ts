@@ -16,3 +16,6 @@ export const getFormattedDate = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export const capitalize = (str: string): string =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : str;

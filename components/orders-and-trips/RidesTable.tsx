@@ -19,6 +19,7 @@ export default function RidesTable<T>({
   className,
   isLoading,
   status,
+  onRowClick,
 }: {
   headerItems: Array<string>;
   title: string;
@@ -27,6 +28,7 @@ export default function RidesTable<T>({
   status: string;
   className?: string;
   isLoading?: boolean;
+  onRowClick?: (id: string) => void;
 }) {
   return (
     <div className="flex flex-col gap-10">
@@ -81,7 +83,13 @@ export default function RidesTable<T>({
           </TableHeader>
           <TableBody>
             {tableData.map((cell, index) => (
-              <TableRow key={index}>
+              <TableRow
+                key={index}
+                className={cn(onRowClick && "cursor-pointer")}
+                onClick={() =>
+                  onRowClick?.((cell as { id: string }).id)
+                }
+              >
                 {Object.keys(cell as Record<string, string | number>).map(
                   (item) => (
                     <TableCell

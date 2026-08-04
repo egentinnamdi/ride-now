@@ -36,6 +36,10 @@ export const data = {
           url: "revenue",
         },
         {
+          title: "Payouts Overview",
+          url: "payouts overview",
+        },
+        {
           title: "Total Rides & Orders",
           url: "rides and orders",
         },

@@ -60,28 +60,28 @@ interface ActionDialogProps {
   onSubmit: (data: SuspensionFormValues | Record<string, never>) => void;
   variant: "suspend" | "delete" | "restore";
   driverName: string;
+  entityLabel?: string;
 }
 
-const dialogConfig = {
-  suspend: {
-    title: "Suspend Driver Account",
-    description:
-      "Please provide a reason for suspending this driver. This action can be reversed later.",
-    submitText: "Confirm Suspension",
-  },
-  delete: {
-    title: "Delete Driver Account",
-    description:
-      "Please provide a reason for deleting this driver. This action is permanent and cannot be undone.",
-    submitText: "Confirm Deletion",
-  },
-  restore: {
-    title: "Restore Driver Account",
-    description:
-      "This will restore the driver's account and allow them to receive ride requests again.",
-    submitText: "Confirm Restoration",
-  },
-};
+function getDialogConfig(entityLabel: string) {
+  return {
+    suspend: {
+      title: `Suspend ${entityLabel} Account`,
+      description: `Please provide a reason for suspending this ${entityLabel.toLowerCase()}. This action can be reversed later.`,
+      submitText: "Confirm Suspension",
+    },
+    delete: {
+      title: `Delete ${entityLabel} Account`,
+      description: `Please provide a reason for deleting this ${entityLabel.toLowerCase()}. This action is permanent and cannot be undone.`,
+      submitText: "Confirm Deletion",
+    },
+    restore: {
+      title: `Restore ${entityLabel} Account`,
+      description: `This will restore the ${entityLabel.toLowerCase()}'s account and allow them to receive ride requests again.`,
+      submitText: "Confirm Restoration",
+    },
+  };
+}
 
 export function SuspensionDialog({
   isOpen,
@@ -89,6 +89,7 @@ export function SuspensionDialog({
   onSubmit,
   variant,
   driverName,
+  entityLabel = "Driver",
 }: ActionDialogProps) {
   const form = useForm<SuspensionFormValues>({
     resolver: zodResolver(suspensionSchema),
@@ -100,7 +101,7 @@ export function SuspensionDialog({
 
   const watchedReason = form.watch("reason");
 
-  const config = dialogConfig[variant];
+  const config = getDialogConfig(entityLabel)[variant];
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

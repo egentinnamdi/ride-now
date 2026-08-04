@@ -9,6 +9,7 @@ import RidesAndOrders from "@/components/payout-and-wallets/RidesAndOrders";
 import TransactionHistory from "@/components/payout-and-wallets/TransactionHistory";
 import SubscriptionSetting from "@/components/payout-and-wallets/SubscriptionSetting";
 import Revenue from "@/components/payout-and-wallets/Revenue";
+import PayoutsOverview from "@/components/payout-and-wallets/PayoutsOverview";
 import CommissionSettings from "@/components/payout-and-wallets/CommissionSettings";
 import TotalUsers from "@/components/user-management/TotalUsers";
 import ViewAndManage from "@/components/user-management/ViewAndManage";
@@ -21,6 +22,7 @@ import { useQuery } from "@/hooks/useQuery";
 import { endpoints } from "@/lib/endpoints";
 import { UserSummaryDto } from "@/types/userManagement";
 import PendingPayouts from "@/components/payout-and-wallets/PendingPayouts";
+import { NotificationBell } from "@/components/multi-page/NotificationBell";
 
 const rides = [
   { title: "ongoing orders/rides", status: "in_progress" },
@@ -35,7 +37,7 @@ export default function Dashboard() {
   const tab = searchParams.get("tab");
   const subpageHeader = decodeURIComponent(subpage?.toString() || "");
   const [subpageTabs] = data.navMain.filter(
-    (item) => item.title === subpageHeader
+    (item) => item.title === subpageHeader,
   );
   const [totalOngoing, setTotalOngoing] = useState(0);
   const [totalCancelled, setTotalCancelled] = useState(0);
@@ -44,7 +46,7 @@ export default function Dashboard() {
   const { data: summary, isLoading } = useQuery<UserSummaryDto>(
     "users-summary",
     endpoints.admin.users.summary,
-    { timeframe }
+    { timeframe },
   );
 
   useEffect(() => {
@@ -60,9 +62,12 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col">
       <Command>
-        <header className="text-primary-dark bg-background h-28 flex justify-between items-center px-10">
-          <h2 className="text-5xl font-semibold">{subpageHeader}</h2>
+        <header className="text-primary-dark bg-background h-28 gap-5 flex justify-between items-center px-10">
+          <h2 className="text-5xl flex-1 font-semibold">{subpageHeader}</h2>
           <CommandInput placeholder="Search" className="w-1/4" />
+          <div className="flex items-center gap-4">
+            <NotificationBell />
+          </div>
         </header>
         <Tabs
           value={currentTab ?? ""}
@@ -106,6 +111,7 @@ export default function Dashboard() {
           </div>
           {/* Payouts & Wallets*/}
           <Revenue />
+          <PayoutsOverview />
           <RidesAndOrders />
           <TransactionHistory />
           <PendingPayouts />
