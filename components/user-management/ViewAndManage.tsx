@@ -65,14 +65,17 @@ export default function ViewAndManage({
     {
       limit: "10",
       page: page.toString(),
-    }
+    },
   );
 
   // Get Single Driver
-  const { data: driver, isLoading: isFetchingDriver } = useQuery<DriverStatsDTO>(
-    "driver",
-    endpoints.admin.drivers.detail(id)
-  );
+  const { data: driver, isLoading: isFetchingDriver } =
+    useQuery<DriverStatsDTO>(
+      "driver",
+      endpoints.admin.drivers.detail(id),
+      undefined,
+      { enabled: Boolean(id) }
+    );
 
   // Added Ellipsis Icon to table Data
   const tableData = data?.drivers.map((item) => ({
@@ -97,7 +100,7 @@ export default function ViewAndManage({
           <TabsList className=" w-full flex gap-2 py-8 px-1.5 bg-background/20 h-14">
             {items.map((item) => (
               <TabsTrigger
-                className="!capitalize data-[state=active]:shadow-none data-[state=active]:bg-primary data-[state=active]:text-white bg-white text-gray-400 font-semibold !text-lg"
+                className="capitalize! data-[state=active]:shadow-none data-[state=active]:bg-primary data-[state=active]:text-white bg-white text-gray-400 font-semibold text-lg!"
                 value={item}
                 key={item}
               >

@@ -11,7 +11,7 @@ export function useQuery<T>(
   options?: Omit<UseQueryOptions<T>, "queryKey" | "queryFn">
 ) {
   return useReactQuery<T>({
-    queryKey: [key, params],
+    queryKey: [key, endpoint, params],
     queryFn: async () => {
       const { data } = await api.get<T>(endpoint, { params });
       return data;

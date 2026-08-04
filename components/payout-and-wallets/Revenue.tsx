@@ -49,12 +49,12 @@ export default function Revenue() {
   const selectedDate = date ?? today;
   const rangeStart = stringifiedDate
     ? getFormattedDate(
-        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
       )
     : getFormattedDate(lastMonth);
   const rangeEnd = stringifiedDate
     ? getFormattedDate(
-        new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0),
       )
     : getFormattedDate(today);
 
@@ -62,7 +62,7 @@ export default function Revenue() {
   const { data: revenueData, isLoading: isFetching } = useQuery<TotalRevenue>(
     "revenue",
     endpoints.admin.revenue.total,
-    { timeframe, startDate: rangeStart, endDate: rangeEnd }
+    { timeframe, startDate: rangeStart, endDate: rangeEnd },
   );
 
   // Get Revenue Transactions
@@ -74,7 +74,7 @@ export default function Revenue() {
     useQuery<ITransactionData>(
       "revenueTransactions",
       endpoints.admin.revenue.transactions,
-      { limit: "10", page: page.toString(), month, year }
+      { limit: "10", page: page.toString(), month, year },
     );
 
   return (
@@ -98,7 +98,7 @@ export default function Revenue() {
           <TabsList className="bg-white">
             {timeInterval.map((item) => (
               <TabsTrigger
-                className="!capitalize  text-background data-[state=active]:bg-primary"
+                className="capitalize!  text-background data-[state=active]:bg-primary"
                 key={item}
                 value={item}
               >

@@ -34,7 +34,7 @@ export default function PendingApprovalDetail({
           setIsRejectOpen(false);
           toggleDetail(id);
         },
-      }
+      },
     );
   }
 
@@ -89,7 +89,7 @@ export default function PendingApprovalDetail({
           <Button
             disabled={isAccepting || isLoading}
             onClick={handleAccept}
-            className="bg-[#359150] w-[230px] text-base h-14"
+            className="bg-[#359150] w-57.5 text-base h-14"
           >
             {isAccepting ? (
               <>
@@ -102,7 +102,7 @@ export default function PendingApprovalDetail({
           <Button
             disabled={isRejecting || isLoading}
             onClick={() => setIsRejectOpen(true)}
-            className="bg-red-600 text-base w-[230px] h-14"
+            className="bg-red-600 text-base w-57.5 h-14"
           >
             Reject
           </Button>
@@ -111,29 +111,40 @@ export default function PendingApprovalDetail({
       <div className="flex flex-col gap-5 py-10">
         <h2 className="text-xl font-bold text-gray-600">Documents</h2>
         <div className="grid bg-background/10 rounded-lg grid-cols-2 p-10 gap-5">
-          {approval?.documents?.map((doc, index) => (
-            <div
-              key={`${doc.type}-${index}`}
-              className="border-b flex flex-col gap-2 justify-center"
-            >
-              <span className="text-sm font-semibold text-gray-400 capitalize">
-                {doc.type.replace(/_/g, " ")}
-              </span>
-              <div className="flex items-center gap-3">
-                <span className="text-sm capitalize font-semibold text-gray-700">
-                  {doc.status.replace(/_/g, " ")}
+          {approval?.documents?.map((doc, index) => {
+            const typeCount = approval.documents.filter(
+              (d) => d.type === doc.type,
+            ).length;
+            const typeOccurrence =
+              approval.documents
+                .slice(0, index)
+                .filter((d) => d.type === doc.type).length + 1;
+
+            return (
+              <div
+                key={`${doc.type}-${index}`}
+                className="border-b flex flex-col gap-2 justify-center"
+              >
+                <span className="text-sm font-semibold text-gray-400 capitalize">
+                  {doc.type.replace(/_/g, " ")}
+                  {typeCount > 1 ? ` ${typeOccurrence}` : ""}
                 </span>
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary text-sm font-semibold underline"
-                >
-                  View document
-                </a>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm capitalize font-semibold text-gray-700">
+                    {doc.status.replace(/_/g, " ")}
+                  </span>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary text-sm font-semibold underline"
+                  >
+                    View document
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       <RejectApprovalDialog

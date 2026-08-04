@@ -79,7 +79,7 @@ export default function Dashboard() {
             <TabsList className="bg-inherit  p-5 pb-0 rounded-none h-full ">
               {subpageTabs?.items.map(({ url }) => (
                 <TabsTrigger
-                  className="!capitalize cursor-pointer shrink-0  !text-lg  text-gray-400 data-[state=active]:bg-inherit data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:rounded-none data-[state=active]:shadow-none "
+                  className="capitalize! cursor-pointer shrink-0  text-lg!  text-gray-400 data-[state=active]:bg-inherit data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:rounded-none data-[state=active]:shadow-none "
                   key={url}
                   value={url}
                 >
@@ -107,7 +107,7 @@ export default function Dashboard() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Separator className="data-[orientation=horizontal]:!w-[90vw]" />
+            <Separator className="data-[orientation=horizontal]:w-[90vw]!" />
           </div>
           {/* Payouts & Wallets*/}
           <Revenue />

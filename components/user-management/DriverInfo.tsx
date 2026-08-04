@@ -69,7 +69,7 @@ export default function DriverInfo({
   const [txPage, setTxPage] = useState(1);
   const { data: transactions, isLoading: isFetchingTx } = useDriverTransactions(
     id,
-    { page: txPage, limit: 10 }
+    { page: txPage, limit: 10 },
   );
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function DriverInfo({
       prev.map((item) => ({
         ...item,
         value: driverDetails.name,
-      }))
+      })),
     );
   }, [driverDetails]);
 
@@ -88,7 +88,7 @@ export default function DriverInfo({
       method: "POST",
       invalidateKeys: ["driver"],
       successMsg: "Account suspended",
-    }
+    },
   );
 
   const { mutate: deleteDriver, isPending: isDeleting } = useMutation(
@@ -97,7 +97,7 @@ export default function DriverInfo({
       method: "DELETE",
       invalidateKeys: ["driver"],
       successMsg: "Account deleted successfully",
-    }
+    },
   );
 
   const { mutate: restoreDriver, isPending: isRestoring } = useMutation(
@@ -106,7 +106,7 @@ export default function DriverInfo({
       method: "POST",
       invalidateKeys: ["driver"],
       successMsg: "Account restored",
-    }
+    },
   );
 
   function handleAction(data: SuspensionFormValues | object) {
@@ -186,7 +186,7 @@ export default function DriverInfo({
                       isOpen: true,
                     }))
                   }
-                  className="bg-[#F18359] w-[230px] text-base  h-14"
+                  className="bg-[#F18359] w-57.5 text-base  h-14"
                 >
                   Suspend Account
                 </Button>
@@ -200,7 +200,7 @@ export default function DriverInfo({
                       isOpen: true,
                     }))
                   }
-                  className="bg-[#359150] w-[230px] text-base  h-14"
+                  className="bg-[#359150] w-57.5 text-base  h-14"
                 >
                   Restore Account
                 </Button>
@@ -214,7 +214,7 @@ export default function DriverInfo({
                     isOpen: true,
                   }))
                 }
-                className="bg-red-600 text-base w-[230px] h-14"
+                className="bg-red-600 text-base w-57.5 h-14"
               >
                 Delete Account
               </Button>
