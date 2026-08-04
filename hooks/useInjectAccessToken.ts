@@ -1,4 +1,5 @@
 import api from "@/lib/client";
+import { endpoints } from "@/lib/endpoints";
 import { SigninResponseDto } from "@/types/auth";
 import { useEffect, useState } from "react";
 
@@ -6,7 +7,7 @@ export function useInjectAccessToken() {
   const [user, setUser] = useState<SigninResponseDto | null>(null);
 
   useEffect(() => {
-    const userJson = localStorage.getItem("/auth/signin");
+    const userJson = localStorage.getItem(endpoints.auth.signin);
     const userData: SigninResponseDto | null = userJson
       ? JSON.parse(userJson)
       : null;

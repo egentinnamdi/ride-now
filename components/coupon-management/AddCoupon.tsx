@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import CouponTable from "./CouponTable";
 import { useMutation } from "@/hooks/useMutation";
+import { endpoints } from "@/lib/endpoints";
 import { CouponResponse } from "@/types/coupon";
 import { Dialog } from "../ui/dialog";
 import { toast } from "sonner";
@@ -26,7 +27,7 @@ export default function AddCoupon() {
       validityPeriod: string;
       usageLimit: number;
     }
-  >("/admin/coupons", {
+  >(endpoints.admin.coupons.all, {
     method: "POST",
     invalidateKeys: ["coupons"],
     successMsg: "Coupon created successfully",

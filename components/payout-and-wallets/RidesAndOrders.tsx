@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 import { Skeleton } from "../ui/skeleton";
 
 const className = "flex flex-col  rounded-2xl p-4  justify-between w-2/4 h-40";
@@ -43,7 +44,7 @@ export default function RidesAndOrders() {
   // Get All rides completed
   const { data: completedRides, isLoading: isSummaryLoading } = useQuery<{
     ridesCompleted: number;
-  }>("completed-rides", "/admin/rides/summary");
+  }>("completed-rides", endpoints.admin.rides.summary);
 
   function syncData(values: AdminTransactionsResponseDto, isLoading: boolean) {
     setData(values.transactions);
@@ -83,7 +84,7 @@ export default function RidesAndOrders() {
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
       <Transactions
         key="rides-transactions"
-        endpoint="/admin/rides/transactions"
+        endpoint={endpoints.admin.rides.transactions}
         syncData={syncData}
         queryKey="rides-transactions"
       >

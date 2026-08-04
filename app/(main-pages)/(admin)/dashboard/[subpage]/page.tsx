@@ -18,6 +18,7 @@ import AddCoupon from "@/components/coupon-management/AddCoupon";
 import { SigninResponseDto } from "@/types/auth";
 import Rides from "@/components/orders-and-trips/Rides";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 import { UserSummaryDto } from "@/types/userManagement";
 import PendingPayouts from "@/components/payout-and-wallets/PendingPayouts";
 
@@ -42,7 +43,7 @@ export default function Dashboard() {
   const [[timeframe], setTimeframe] = useState<Array<string>>(["monthly"]);
   const { data: summary, isLoading } = useQuery<UserSummaryDto>(
     "users-summary",
-    "/admin/users/summary",
+    endpoints.admin.users.summary,
     { timeframe }
   );
 

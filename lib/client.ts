@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { RefreshTokenResponseDto, SigninResponseDto } from "@/types/auth";
+import { endpoints } from "@/lib/endpoints";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -15,7 +16,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     try {
-      const userJson = localStorage.getItem("/auth/signin");
+      const userJson = localStorage.getItem(endpoints.auth.signin);
       if (userJson) {
         const user: SigninResponseDto = JSON.parse(userJson);
         const token = user?.token;
@@ -39,7 +40,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const userJson = localStorage.getItem("/auth/signin");
+        const userJson = localStorage.getItem(endpoints.auth.signin);
         if (!userJson) {
           window.location.href = "/sign-in";
           return Promise.reject(error);
@@ -48,7 +49,7 @@ api.interceptors.response.use(
         const refreshToken = user?.refresh_token;
 
         const { data } = await axios.post<RefreshTokenResponseDto>(
-          `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/refresh`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URI}${endpoints.auth.refresh}`,
           { refresh_token: refreshToken }
         );
 
@@ -57,13 +58,13 @@ api.interceptors.response.use(
           token: data.token,
           refresh_token: data.refresh_token,
         };
-        localStorage.setItem("/auth/signin", JSON.stringify(newUser));
+        localStorage.setItem(endpoints.auth.signin, JSON.stringify(newUser));
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${data.token}`;
         }
         return api(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem("/auth/signin");
+        localStorage.removeItem(endpoints.auth.signin);
         window.location.href = "/sign-in";
         return Promise.reject(refreshError);
       }

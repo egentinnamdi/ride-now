@@ -4,6 +4,7 @@ import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
 import { NoTransactions } from "../multi-page/NoTransactions";
 import { PaginationResponseDto } from "./RidesAndOrders";
+import { endpoints } from "@/lib/endpoints";
 
 const tableHeaders = [
   "ID",
@@ -42,7 +43,7 @@ export default function TransactionHistory() {
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
       <Transactions
         syncData={syncData}
-        endpoint="/admin/transactions"
+        endpoint={endpoints.admin.transactions}
         queryKey="transaction-history"
       >
         <RevenueTable

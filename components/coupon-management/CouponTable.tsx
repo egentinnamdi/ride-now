@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 import { Coupon, CouponResponse } from "@/types/coupon";
 import {
   Table,
@@ -66,7 +67,7 @@ export default function CouponTable({
   // Get Coupons
   const { data: coupons, isLoading } = useQuery<CouponResponse>(
     "coupons",
-    "/admin/coupons",
+    endpoints.admin.coupons.all,
     {
       limit: "10",
       page: page.toString(),
@@ -76,7 +77,7 @@ export default function CouponTable({
   );
   // Update Coupons
   const { mutate: updateCoupon, isPending } = useMutation(
-    `/admin/coupons/${couponId}`,
+    endpoints.admin.coupons.detail(couponId),
     {
       method: "PUT",
       invalidateKeys: ["coupons"],

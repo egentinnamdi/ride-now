@@ -5,8 +5,18 @@ import {
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
-type Method = "POST" | "PUT" | "DELETE";
+type Method = "POST" | "PUT" | "PATCH" | "DELETE";
+
+function getErrorMessage(error: unknown, fallback = "Something went wrong") {
+  if (error instanceof AxiosError) {
+    const message = error.response?.data?.message;
+    if (Array.isArray(message)) return message.join(", ");
+    if (typeof message === "string") return message;
+  }
+  return error instanceof Error ? error.message : fallback;
+}
 
 export function useMutation<TData, TVariables>(
   endpoint: string,
@@ -27,10 +37,10 @@ export function useMutation<TData, TVariables>(
   // keys to refetch after success
   const router = useRouter();
   const queryClient = useQueryClient();
-  const mutation = useReactMutation<TData, Error, TVariables>({
+  const mutation = useReactMutation<TData, AxiosError, TVariables>({
     mutationFn: async function (reqData) {
       const { data } = await api[
-        method.toLowerCase() as "post" | "put" | "delete"
+        method.toLowerCase() as "post" | "put" | "patch" | "delete"
       ]<TData>(endpoint, reqData);
       return data;
     },
@@ -49,7 +59,7 @@ export function useMutation<TData, TVariables>(
       }
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
     },
   });
 

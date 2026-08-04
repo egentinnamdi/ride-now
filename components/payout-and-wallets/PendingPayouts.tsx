@@ -3,6 +3,7 @@ import { TabsContent } from "../ui/tabs";
 import Transactions from "./Transactions";
 import RevenueTable from "./RevenueTable";
 import { PaginationResponseDto } from "./RidesAndOrders";
+import { endpoints } from "@/lib/endpoints";
 
 const tableHeaders = [
   "Identification Number",
@@ -36,7 +37,7 @@ export default function PendingPayouts() {
       {/* Transactions Component Contains the Table Title Component and the main Table passed in as a child  */}
       <Transactions
         syncData={syncData}
-        endpoint="/admin/payouts/pending"
+        endpoint={endpoints.admin.payouts.pending}
         queryKey="pending-payouts"
       >
         <RevenueTable

@@ -1,6 +1,7 @@
 "use client";
 
 import { SigninResponseDto } from "@/types/auth";
+import { endpoints } from "@/lib/endpoints";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useEffect } from "react";
@@ -10,7 +11,7 @@ export function useUser() {
 
   let user: SigninResponseDto | null = null;
   if (typeof window !== "undefined") {
-    const userJson = localStorage.getItem("/auth/signin");
+    const userJson = localStorage.getItem(endpoints.auth.signin);
     if (userJson) {
       try {
         user = JSON.parse(userJson);

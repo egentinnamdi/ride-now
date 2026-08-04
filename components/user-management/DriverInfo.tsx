@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { DriverDetails, DriverStatsDTO } from "@/types/userManagement";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useMutation } from "@/hooks/useMutation";
+import { endpoints } from "@/lib/endpoints";
 import { SuspensionDialog, SuspensionFormValues } from "./SuspensionDialog";
 import { Skeleton } from "../ui/skeleton";
 
@@ -73,7 +74,7 @@ export default function DriverInfo({
 
   // Handle Suspension and Deletion of Driver
   const { mutate: suspendDriver, isPending: isSuspending } = useMutation(
-    `/admin/drivers/${id}/suspend`,
+    endpoints.admin.drivers.suspend(id),
     {
       method: "POST",
       invalidateKeys: ["driver"],
@@ -82,7 +83,7 @@ export default function DriverInfo({
   );
 
   const { mutate: deleteDriver, isPending: isDeleting } = useMutation(
-    `/admin/drivers/${id}`,
+    endpoints.admin.drivers.detail(id),
     {
       method: "DELETE",
       invalidateKeys: ["driver"],
@@ -91,7 +92,7 @@ export default function DriverInfo({
   );
 
   const { mutate: restoreDriver, isPending: isRestoring } = useMutation(
-    `/admin/drivers/${id}/unsuspend`,
+    endpoints.admin.drivers.unsuspend(id),
     {
       method: "POST",
       invalidateKeys: ["driver"],

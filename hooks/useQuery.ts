@@ -8,7 +8,7 @@ export function useQuery<T>(
   key: string,
   endpoint: string,
   params?: Record<string, string>,
-  options?: UseQueryOptions<T>
+  options?: Omit<UseQueryOptions<T>, "queryKey" | "queryFn">
 ) {
   return useReactQuery<T>({
     queryKey: [key, params],

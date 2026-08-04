@@ -13,6 +13,7 @@ import {
   UserSummaryDto,
 } from "@/types/userManagement";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 
 const items = ["drivers", "riders", "passengers"];
 
@@ -60,7 +61,7 @@ export default function ViewAndManage({
   const [page, setPage] = useState(1);
   const { data, isLoading: isFetching } = useQuery<DriverDTO>(
     "drivers",
-    "/admin/drivers",
+    endpoints.admin.drivers.all,
     {
       limit: "10",
       page: page.toString(),
@@ -68,8 +69,10 @@ export default function ViewAndManage({
   );
 
   // Get Single Driver
-  const { data: driver, isLoading: isFetchingDriver } =
-    useQuery<DriverStatsDTO>("driver", `/admin/drivers/${id}`);
+  const { data: driver, isLoading: isFetchingDriver } = useQuery<DriverStatsDTO>(
+    "driver",
+    endpoints.admin.drivers.detail(id)
+  );
 
   // Added Ellipsis Icon to table Data
   const tableData = data?.drivers.map((item) => ({

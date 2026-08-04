@@ -70,3 +70,57 @@ export type Pagination = {
   limit: number;
   totalPages: number;
 };
+
+export type DriverDocumentType =
+  | "drivers_license"
+  | "vehicle_registration"
+  | "insurance"
+  | "roadworthiness"
+  | "car_image";
+
+export type DriverDocumentStatus =
+  | "uploaded"
+  | "pending_review"
+  | "under_review"
+  | "verified"
+  | "rejected"
+  | "expired";
+
+export type DriverDocument = {
+  type: DriverDocumentType;
+  url: string;
+  status: DriverDocumentStatus;
+};
+
+export type KycStatus =
+  | "pending"
+  | "partially_verified"
+  | "verified"
+  | "rejected";
+
+export type SuspendedAccountDetailDto = {
+  fullName: string;
+  carDetails?: string;
+  status: "active" | "suspended" | "inactive";
+  kycStatus: KycStatus;
+  reportedTimes: number;
+  plateNumber?: string;
+  totalEarned?: number;
+  completedRides?: number;
+  canceledRides?: number;
+  suspensionReason: string;
+  dateSuspended: string;
+};
+
+export type ApprovalDetailDto = {
+  fullName: string;
+  carDetails?: string;
+  dateSubmitted: string;
+  status: "pending" | "approved" | "rejected" | "suspended";
+  kycStatus: KycStatus;
+  documents: DriverDocument[];
+};
+
+export type RejectApprovalDto = {
+  reason: string;
+};

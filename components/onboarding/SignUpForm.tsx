@@ -38,7 +38,7 @@ export default function SignUpForm({
   const [formData, setFormData] = useState(signUpData);
   const [passwordError, setPasswordError] = useState(false);
   // const signUpMutate = useMutation({
-  //   endpoint: "/auth/signup",
+  //   endpoint: endpoints.auth.signup,
   //   method: "POST",
   // });
 

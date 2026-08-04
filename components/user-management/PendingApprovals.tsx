@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { endpoints } from "@/lib/endpoints";
 
 import UserManagementTable from "./UserManagementTable";
 import {
@@ -62,7 +63,7 @@ export default function PendingApprovals() {
               headers={headers}
               className=""
               queryKey="pending-approval"
-              endpoint="/admin/approvals/pending"
+              endpoint={endpoints.admin.approvals.pending}
             />
           </TabsContent>
         ))}

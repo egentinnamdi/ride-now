@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@/hooks/useMutation";
+import { endpoints } from "@/lib/endpoints";
 import { LoginRequestDto, SigninResponseDto } from "@/types/auth";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
@@ -15,7 +16,7 @@ export default function SignIn() {
   const { mutate: signInMutate } = useMutation<
     SigninResponseDto,
     LoginRequestDto
-  >("/auth/signin", {
+  >(endpoints.auth.signin, {
     redirectTo: "/",
     successMsg: "Login successful...",
     storeInCache: true,

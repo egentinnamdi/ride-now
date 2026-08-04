@@ -3,6 +3,7 @@ import { TabsContent } from "../ui/tabs";
 import RidesTable from "./RidesTable";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 import {
   Select,
   SelectContent,
@@ -90,7 +91,7 @@ export default function Rides({
 
   const { data: rides, isLoading } = useQuery<RidesResponse>(
     "rides",
-    "/admin/rides",
+    endpoints.admin.rides.all,
     {
       status,
       limit: "10",

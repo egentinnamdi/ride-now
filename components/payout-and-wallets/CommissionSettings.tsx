@@ -6,6 +6,7 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { useQuery } from "@/hooks/useQuery";
 import { useMutation } from "@/hooks/useMutation";
+import { endpoints } from "@/lib/endpoints";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/skeleton";
@@ -21,7 +22,7 @@ type CommissionsDto = {
 export default function CommissionSettings() {
   const { data: commissions, isLoading } = useQuery<CommissionsDto>(
     "commission",
-    "/admin/settings/commission"
+    endpoints.admin.settings.commission
   );
   const [fields, setFields] = useState<{
     rides: string;
@@ -45,7 +46,7 @@ export default function CommissionSettings() {
       message: string;
     },
     CommissionsDto
-  >("/admin/settings/commission", {
+  >(endpoints.admin.settings.commission, {
     method: "PUT",
     invalidateKeys: ["commission"],
     successMsg: "Commissions updated successfully",

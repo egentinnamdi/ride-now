@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar } from "../charts/BarChart";
 import RevenueTable from "./RevenueTable";
 import { useQuery } from "@/hooks/useQuery";
+import { endpoints } from "@/lib/endpoints";
 import { getFormattedDate } from "@/lib/utils";
 import { ITransactionData } from "@/types/transactions";
 import PaginationComponent from "../ui/PaginationComponent";
@@ -51,7 +52,7 @@ export default function Revenue() {
   // Get Total Revenue
   const { data: revenueData, isLoading: isFetching } = useQuery<TotalRevenue>(
     "revenue",
-    "/admin/revenue/total",
+    endpoints.admin.revenue.total,
     parameters
   );
 
@@ -63,7 +64,7 @@ export default function Revenue() {
   const { data: revenueTransactions, isLoading: isTransactionsLoading } =
     useQuery<ITransactionData>(
       "revenueTransactions",
-      "/admin/revenue/transactions",
+      endpoints.admin.revenue.transactions,
       { limit: "10", page: page.toString(), month, year }
     );
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ChevronDown, Download, EllipsisVertical } from "lucide-react";
 import { Button } from "../ui/button";
+import { endpoints } from "@/lib/endpoints";
 
 import UserManagementTable from "./UserManagementTable";
 import {
@@ -63,7 +64,7 @@ export default function SuspendedAccounts() {
           <TabsContent className="h-full" key={item} value={item}>
             <UserManagementTable
               queryKey="suspended-accounts"
-              endpoint="/admin/users/suspended"
+              endpoint={endpoints.admin.users.suspended}
               headers={headers}
               type={type}
               className=""
